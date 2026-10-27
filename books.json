@@ -4,20 +4,24 @@
     "title": "Kit and the Red Hat",
     "short": "Kit and the Hat",
     "type": "cat",
-    "level": "Short vowels \u00b7 CVC \u00b7 blends",
+    "level": "Short vowels · CVC · blends",
     "pages": [
       "Kit is a cat.",
       "Kit has a red hat.",
       "A big gust hits the hat.",
       "The hat lands in the mud.",
-      "Kit is sad.",
+      "Kit is sad. The hat is wet.",
       "Pip can get the hat.",
-      "Kit and Pip sit. The hat is wet.",
-      "The hat will dry in the sun."
+      "The hat will dry in the sun.",
+      "Kit is glad for Pip’s help."
     ],
     "parentHelp": {
+      "7": [
+        "dry — parent-assisted"
+      ],
       "8": [
-        "dry \u2014 vowel team y; parent-assisted"
+        "glad — consonant blend",
+        "help — consonant blend"
       ]
     }
   },
@@ -26,7 +30,7 @@
     "title": "Pip and the Big Egg",
     "short": "The Big Egg",
     "type": "dino",
-    "level": "Short vowels \u00b7 CVC \u00b7 blends",
+    "level": "Short vowels · CVC · blends",
     "pages": [
       "Pip has a big egg.",
       "The egg is in the nest.",
@@ -43,7 +47,7 @@
     "title": "Sam and the Fun Trip",
     "short": "A Fun Trip",
     "type": "plane",
-    "level": "Short vowels \u00b7 CVC \u00b7 blends",
+    "level": "Short vowels · CVC · blends",
     "pages": [
       "Sam has a red jet.",
       "Kit and Pip can get in.",
