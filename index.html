@@ -27,21 +27,56 @@
 #reader .nav button{font-size:clamp(17px,2vw,24px)}
 @media(min-width:701px){#reader .spread{grid-template-columns:1fr 1fr}#reader .textpanel{min-height:510px}}
 @media(max-width:700px){#reader{padding:8px}#reader .readerbar{min-height:85px;padding:8px 6px;gap:4px}#reader .readerbar .name{font-size:clamp(16px,4vw,23px)}#reader .readerbar small{font-size:13px}#reader .readerbar .back{font-size:12px;padding:8px}#reader .readerbar .round{width:35px;height:35px}#reader .spread{border-width:7px;min-height:0}#reader .picture{min-height:270px}#reader .picture img{height:260px}#reader .textpanel{min-height:250px}}
-</style></head><body><main class="app"><section id="library"><div class="illustrated-shelf"><div class="shelf-hotspots" id="books"></div><button class="shelf-settings" aria-label="Grownups reading notes" onclick="showParent()">⚙</button></div></section><section id="reader" class="hidden"><div class="readerbar"><button class="back" onclick="showLibrary()">‹ Bookshelf</button><div class="name"><span id="readerTitle"></span><small id="pageCount"></small></div><button class="round" aria-label="Grownups notes" onclick="showParent()">⚙</button></div><div class="spread"><div class="page"><div class="textpanel"><div class="sentence" id="sentence"></div><input id="track" class="track" aria-label="Slide to read each word" type="range" min="0" max="100" value="0" oninput="moveTrack(this.value)"><div class="hint">Slide to read →</div><div class="tools"><button class="tool" onclick="toggleSize()">A+ Larger text</button><button class="tool" onclick="resetTrack()">↺ Start again</button><button class="tool" onclick="speakPage()">🔊 Read aloud</button></div></div></div><div class="page"><div class="picture" id="artpage"></div><div class="tools"><button class="tool" id="reveal" onclick="toggleArt()">✿ Reveal picture</button></div></div></div><div class="nav"><button id="prev" onclick="turn(-1)">‹ Previous</button><button id="next" onclick="turn(1)">Next ›</button></div></section><section id="parent" class="parent hidden"><button class="back" onclick="backFromParent()">‹ Back</button><h2>Grownups' Reading Notes</h2><p>Original decodable practice stories. Some words may require parent assistance. The bookshelf is approved. The reading-page artwork is provisional while the eight individually illustrated scenes are being finalized.</p><div id="parentBooks"></div></section></main><script>
+
+/* v6: functional illustrated reading spread, decorative elements belong to CSS. */
+#reader .spread{position:relative;border:12px solid #72452d;border-radius:35px 35px 24px 24px;box-shadow:0 8px 0 #4e2d20,0 18px 25px #29170e8c;overflow:hidden}
+#reader .spread:after{content:"";position:absolute;left:50%;top:0;bottom:0;width:18px;transform:translateX(-50%);pointer-events:none;background:linear-gradient(90deg,#b68c5c20,#8d5e3a55 45%,#f9e7c730);z-index:1}
+#reader .page:first-child:before{content:"❀  ❁  ❀";position:absolute;left:17px;bottom:18px;color:#8a9b64;font-size:28px;letter-spacing:7px;opacity:.7;pointer-events:none}
+#reader .page:last-child:after{content:"❀  ❁";position:absolute;right:18px;bottom:17px;color:#8a9b64;font-size:24px;opacity:.7;pointer-events:none}
+#reader .picture img{width:100%;max-width:530px;max-height:520px;height:auto;aspect-ratio:1/1;object-fit:contain!important;mix-blend-mode:multiply;border:0!important}
+#reader .picture .note{display:none!important}
+#reader .picture{min-height:440px;gap:16px}
+#reader .picture-placeholder{min-height:320px;width:min(100%,470px);display:grid;place-content:center;text-align:center;border:2px dashed #d0b88e;border-radius:10px;color:#8d7458;background:#fff8e9a8;font-size:23px}
+#reader .tools{position:relative;z-index:2}
+#reader .tool{min-height:46px}
+#reader .nav button{min-height:50px}
+@media(max-width:700px){#reader .spread:after{display:none}#reader .picture{min-height:280px}#reader .picture img{max-height:340px}#reader .picture-placeholder{min-height:220px}#reader .page:first-child:before{font-size:18px}}
+</style></head><body><main class="app"><section id="library"><div class="illustrated-shelf"><div class="shelf-hotspots" id="books"></div><button class="shelf-settings" aria-label="Grownups reading notes" onclick="showParent()">⚙</button></div></section><section id="reader" class="hidden"><div class="readerbar"><button class="back" onclick="showLibrary()">‹ Bookshelf</button><div class="name"><span id="readerTitle"></span><small id="pageCount"></small></div><button class="round" aria-label="Grownups notes" onclick="showParent()">⚙</button></div><div class="spread"><div class="page"><div class="textpanel"><div class="sentence" id="sentence"></div><input id="track" class="track" aria-label="Slide to read each word" type="range" min="0" max="100" value="0" oninput="moveTrack(this.value)"><div class="hint">Slide to read →</div><div class="tools"><button class="tool" onclick="toggleSize()">A+ Larger text</button><button class="tool" onclick="resetTrack()">↺ Start again</button><button class="tool" id="speak" onclick="speakPage()">🔊 Read aloud</button></div></div></div><div class="page"><div class="picture" id="artpage"></div><div class="tools"><button class="tool" id="reveal" aria-pressed="false" onclick="toggleArt()">✿ Reveal picture</button></div></div></div><div class="nav"><button id="prev" onclick="turn(-1)">‹ Previous</button><button id="next" onclick="turn(1)">Next ›</button></div></section><section id="parent" class="parent hidden"><button class="back" onclick="backFromParent()">‹ Back</button><h2>Grownups' Reading Notes</h2><p>Original decodable practice stories. Some words may require parent assistance. The bookshelf is approved. The story has eight individual illustrated scenes. Read aloud uses your device’s built-in speech voice.</p><div id="parentBooks"></div></section></main><script>
 let BOOKS=[],current=null,page=0,large=false,revealed=false,origin='library';const $=id=>document.getElementById(id);const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const art={kit:'kit-cover.webp',pip:'pip-cover.webp',sam:'sam-cover.webp'};
 function renderShelf(){const positions=['kit','pip','sam'];$('books').innerHTML=positions.map(id=>{let b=BOOKS.find(x=>x.id===id);return b?`<button class="shelf-hotspot" aria-label="Read ${escapeHTML(b.title)}" onclick="openBook('${id}')"><span class="sr-only">${escapeHTML(b.title)}</span></button>`:''}).join('')}
-function showLibrary(){current=null;$('library').classList.remove('hidden');$('reader').classList.add('hidden');$('parent').classList.add('hidden');renderShelf();scrollTo(0,0)}
-function openBook(id){current=BOOKS.find(b=>b.id===id);page=0;large=false;$('library').classList.add('hidden');$('parent').classList.add('hidden');$('reader').classList.remove('hidden');renderPage();scrollTo(0,0)}
-function renderPage(){revealed=false;$('readerTitle').textContent=current.title;$('pageCount').textContent=`Page ${page+1} of ${current.pages.length}`;const words=current.pages[page].split(/\s+/);$('sentence').innerHTML=words.map((w,i)=>`<span class="word" data-i="${i}">${escapeHTML(w)}</span>`).join(' ');$('sentence').style.fontSize=large?'clamp(36px,5vw,56px)':'';resetTrack();renderArt();$('prev').disabled=page===0;$('next').textContent=page===current.pages.length-1?'Finish ✓':'Next ›'}
+function showLibrary(){stopSpeech();current=null;$('library').classList.remove('hidden');$('reader').classList.add('hidden');$('parent').classList.add('hidden');renderShelf();scrollTo(0,0)}
+function openBook(id){stopSpeech();current=BOOKS.find(b=>b.id===id);page=0;large=false;$('library').classList.add('hidden');$('parent').classList.add('hidden');$('reader').classList.remove('hidden');renderPage();scrollTo(0,0)}
+function renderPage(){stopSpeech();revealed=false;$('readerTitle').textContent=current.title;$('pageCount').textContent=`Page ${page+1} of ${current.pages.length}`;const words=current.pages[page].split(/\s+/);$('sentence').innerHTML=words.map((w,i)=>`<span class="word" data-i="${i}">${escapeHTML(w)}</span>`).join(' ');$('sentence').style.fontSize=large?'clamp(36px,5vw,56px)':'';resetTrack();renderArt();$('prev').disabled=page===0;$('next').textContent=page===current.pages.length-1?'Finish ✓':'Next ›'}
 function moveTrack(v){let spans=[...document.querySelectorAll('.word')],i=Math.min(spans.length-1,Math.floor(Number(v)/101*spans.length));spans.forEach((s,j)=>s.className='word '+(j===i?'active':j<i?'past':''))}
 function resetTrack(){$('track').value=0;moveTrack(0)}
 function toggleSize(){large=!large;$('sentence').style.fontSize=large?'clamp(36px,5vw,56px)':''}
-function renderArt(){const src=current.id==='kit'?(page===0?'kit-art.webp':`kit-page-${page+1}.webp`):art[current.id];$('artpage').innerHTML=revealed?`<img class="${current.id==='kit'?'':'coverart'}" src="${src}" alt="Illustration for ${escapeHTML(current.title)}"><div class="note">${escapeHTML(current.pages[page])}</div>`:'<div class="note">✿<p>Read the words first.<br>Then reveal the picture.</p></div>';$('reveal').textContent=revealed?'◉ Hide picture':'✿ Reveal picture'}
+function renderArt(){
+ const src=current.id==='kit'?(page===0?'kit-art-clean.webp':`kit-page-${page+1}.webp`):art[current.id];
+ const label=`Illustration for ${current.title}, page ${page+1}`;
+ $('artpage').innerHTML=revealed?`<img src="${src}" alt="${escapeHTML(label)}">`:'<div class="picture-placeholder" aria-label="Picture hidden until revealed"><span aria-hidden="true">❀</span><p>Read the words first.<br>Then reveal the picture.</p></div>';
+ $('reveal').textContent=revealed?'◉ Hide picture':'✿ Reveal picture';
+ $('reveal').setAttribute('aria-pressed',String(revealed));
+}
 function toggleArt(){revealed=!revealed;renderArt()}
-function speakPage(){if(!('speechSynthesis' in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(current.pages[page]);u.rate=.8;speechSynthesis.speak(u)}
+let speaking=false,utterance=null;
+function stopSpeech(){if('speechSynthesis' in window){window.speechSynthesis.cancel()}speaking=false;utterance=null;let b=document.getElementById('speak');if(b)b.textContent='🔊 Read aloud'}
+function speakPage(){
+ if(!('speechSynthesis' in window)){alert('Read aloud is not supported in this browser. Try Safari or Chrome.');return}
+ if(speaking){stopSpeech();return}
+ stopSpeech();
+ const u=new SpeechSynthesisUtterance(current.pages[page]);utterance=u;
+ u.lang='en-US';u.rate=0.78;u.pitch=1.04;u.volume=1;
+ const voices=window.speechSynthesis.getVoices();const preferred=voices.find(v=>v.lang.toLowerCase().startsWith('en')&&/samantha|ava|allison|female/i.test(v.name))||voices.find(v=>v.lang.toLowerCase().startsWith('en'));
+ if(preferred)u.voice=preferred;
+ u.onstart=()=>{speaking=true;document.getElementById('speak').textContent='■ Stop reading'};
+ u.onend=u.onerror=()=>{speaking=false;document.getElementById('speak').textContent='🔊 Read aloud'};
+ // Trigger speech immediately inside the user gesture for Safari/iOS.
+ speaking=true;document.getElementById('speak').textContent='■ Stop reading';
+ window.speechSynthesis.speak(u);
+}
 function turn(delta){if(page===current.pages.length-1&&delta===1){localStorage.setItem('read-'+current.id,'yes');showLibrary();return}page=Math.max(0,Math.min(current.pages.length-1,page+delta));renderPage();scrollTo(0,0)}
 function showParent(){origin=current?'reader':'library';$('library').classList.add('hidden');$('reader').classList.add('hidden');$('parent').classList.remove('hidden');$('parentBooks').innerHTML=BOOKS.map(b=>`<article><h3>${escapeHTML(b.title)}</h3><small>${escapeHTML(b.level)}</small><ol>${b.pages.map(s=>`<li>${escapeHTML(s)}</li>`).join('')}</ol></article>`).join('');scrollTo(0,0)}
 function backFromParent(){if(origin==='reader'&&current){$('parent').classList.add('hidden');$('reader').classList.remove('hidden')}else showLibrary()}
-fetch('./books.json?v=6').then(r=>{if(!r.ok)throw Error('Failed to load books');return r.json()}).then(data=>{BOOKS=data;renderShelf()}).catch(e=>{$('books').textContent='Could not load the books. Please refresh. '+e.message});
+fetch('./books.json?v=7').then(r=>{if(!r.ok)throw Error('Failed to load books');return r.json()}).then(data=>{BOOKS=data;renderShelf()}).catch(e=>{$('books').textContent='Could not load the books. Please refresh. '+e.message});
 </script></body></html>
