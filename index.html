@@ -31,8 +31,8 @@
 /* v6: functional illustrated reading spread, decorative elements belong to CSS. */
 #reader .spread{position:relative;border:12px solid #72452d;border-radius:35px 35px 24px 24px;box-shadow:0 8px 0 #4e2d20,0 18px 25px #29170e8c;overflow:hidden}
 #reader .spread:after{content:"";position:absolute;left:50%;top:0;bottom:0;width:18px;transform:translateX(-50%);pointer-events:none;background:linear-gradient(90deg,#b68c5c20,#8d5e3a55 45%,#f9e7c730);z-index:1}
-#reader .page:first-child:before{content:"❀  ❁  ❀";position:absolute;left:17px;bottom:18px;color:#8a9b64;font-size:28px;letter-spacing:7px;opacity:.7;pointer-events:none}
-#reader .page:last-child:after{content:"❀  ❁";position:absolute;right:18px;bottom:17px;color:#8a9b64;font-size:24px;opacity:.7;pointer-events:none}
+#reader .page:first-child:before{content:"";position:absolute;left:17px;bottom:18px;color:#8a9b64;font-size:28px;letter-spacing:7px;opacity:.7;pointer-events:none}
+#reader .page:last-child:after{content:"";position:absolute;right:18px;bottom:17px;color:#8a9b64;font-size:24px;opacity:.7;pointer-events:none}
 #reader .picture img{width:100%;max-width:530px;max-height:520px;height:auto;aspect-ratio:1/1;object-fit:contain!important;mix-blend-mode:multiply;border:0!important}
 #reader .picture .note{display:none!important}
 #reader .picture{min-height:440px;gap:16px}
@@ -41,6 +41,31 @@
 #reader .tool{min-height:46px}
 #reader .nav button{min-height:50px}
 @media(max-width:700px){#reader .spread:after{display:none}#reader .picture{min-height:280px}#reader .picture img{max-height:340px}#reader .picture-placeholder{min-height:220px}#reader .page:first-child:before{font-size:18px}}
+
+/* v7: decorative foliage instead of emoji glyphs */
+#reader .page:first-child:before,#reader .page:last-child:after{content:""!important;position:absolute;bottom:0;width:175px;height:115px;background-image:url("shelf.webp");background-size:950px auto;background-repeat:no-repeat;opacity:.85;pointer-events:none;filter:saturate(.85);mask-image:radial-gradient(ellipse at bottom left,#000 15%,transparent 78%)}
+#reader .page:first-child:before{left:0;background-position:left bottom}
+#reader .page:last-child:after{right:0;background-position:right bottom;transform:scaleX(-1)}
+/* Existing v6 artwork was extracted from a contact sheet. Conceal edge UI artifacts and soften the hard crop. */
+#reader .picture img{width:112%!important;max-width:none!important;aspect-ratio:auto!important;clip-path:inset(2% 10% 9% 2% round 8px);mask-image:radial-gradient(ellipse 68% 67% at 46% 44%,#000 64%,transparent 99%);filter:none!important;mix-blend-mode:multiply}
+#reader .picture{overflow:hidden}
+
+/* Final storybook frame: all decorations are separate from page illustrations. */
+#reader{padding:0 10px 16px;background:radial-gradient(ellipse at 50% 40%,#a16c43,#795034 90%)}
+#reader .readerbar{max-width:1330px;border:0;border-radius:0;background:transparent;box-shadow:none;position:relative;padding:28px 12px 22px}
+#reader .readerbar .name{font-size:clamp(25px,3.5vw,44px)}
+#reader .spread{max-width:1350px;min-height:min(710px,76vh);border:15px solid #74452c;border-radius:38px 38px 23px 23px;outline:3px solid #b88955;outline-offset:-12px;box-shadow:0 12px 0 #4f2c1e,0 22px 34px #3820177a}
+#reader .page{overflow:hidden}
+#reader .page:before{content:'❀  ❁  ✿';position:absolute;left:17px;bottom:13px;color:#77906c;font-size:25px;letter-spacing:15px;opacity:.7;pointer-events:none}
+#reader .page:last-child:before{left:auto;right:12px}
+#reader .page:after{content:'❦';position:absolute;top:16px;right:20px;font-size:30px;color:#819477;opacity:.45;pointer-events:none}
+#reader .picture img{height:auto;max-height:min(550px,60vh);width:auto;max-width:96%;object-fit:contain;border-radius:3px;filter:drop-shadow(0 4px 6px #5e412833)}
+#reader .picture{min-height:430px}
+#reader .picture-placeholder{min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#8d765c}
+#reader .picture-placeholder span{font-size:58px;color:#91a47c}
+#reader .nav{max-width:1320px}
+#reader .nav button{box-shadow:0 3px 4px #40261955}
+@media(max-width:700px){#reader .spread{grid-template-columns:1fr;min-height:0;border-width:8px}#reader .page:before{font-size:16px}#reader .picture{min-height:250px}#reader .picture img{max-height:350px}#reader .readerbar{padding:12px 3px}#reader .readerbar .name{font-size:19px}}
 </style></head><body><main class="app"><section id="library"><div class="illustrated-shelf"><div class="shelf-hotspots" id="books"></div><button class="shelf-settings" aria-label="Grownups reading notes" onclick="showParent()">⚙</button></div></section><section id="reader" class="hidden"><div class="readerbar"><button class="back" onclick="showLibrary()">‹ Bookshelf</button><div class="name"><span id="readerTitle"></span><small id="pageCount"></small></div><button class="round" aria-label="Grownups notes" onclick="showParent()">⚙</button></div><div class="spread"><div class="page"><div class="textpanel"><div class="sentence" id="sentence"></div><input id="track" class="track" aria-label="Slide to read each word" type="range" min="0" max="100" value="0" oninput="moveTrack(this.value)"><div class="hint">Slide to read →</div><div class="tools"><button class="tool" onclick="toggleSize()">A+ Larger text</button><button class="tool" onclick="resetTrack()">↺ Start again</button><button class="tool" id="speak" onclick="speakPage()">🔊 Read aloud</button></div></div></div><div class="page"><div class="picture" id="artpage"></div><div class="tools"><button class="tool" id="reveal" aria-pressed="false" onclick="toggleArt()">✿ Reveal picture</button></div></div></div><div class="nav"><button id="prev" onclick="turn(-1)">‹ Previous</button><button id="next" onclick="turn(1)">Next ›</button></div></section><section id="parent" class="parent hidden"><button class="back" onclick="backFromParent()">‹ Back</button><h2>Grownups' Reading Notes</h2><p>Original decodable practice stories. Some words may require parent assistance. The bookshelf is approved. The story has eight individual illustrated scenes. Read aloud uses your device’s built-in speech voice.</p><div id="parentBooks"></div></section></main><script>
 let BOOKS=[],current=null,page=0,large=false,revealed=false,origin='library';const $=id=>document.getElementById(id);const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const art={kit:'kit-cover.webp',pip:'pip-cover.webp',sam:'sam-cover.webp'};
@@ -52,31 +77,32 @@ function moveTrack(v){let spans=[...document.querySelectorAll('.word')],i=Math.m
 function resetTrack(){$('track').value=0;moveTrack(0)}
 function toggleSize(){large=!large;$('sentence').style.fontSize=large?'clamp(36px,5vw,56px)':''}
 function renderArt(){
- const src=current.id==='kit'?(page===0?'kit-art-clean.webp':`kit-page-${page+1}.webp`):art[current.id];
+ const src=current.id==='kit'?`kit-page-${page+1}.webp`:art[current.id];
  const label=`Illustration for ${current.title}, page ${page+1}`;
  $('artpage').innerHTML=revealed?`<img src="${src}" alt="${escapeHTML(label)}">`:'<div class="picture-placeholder" aria-label="Picture hidden until revealed"><span aria-hidden="true">❀</span><p>Read the words first.<br>Then reveal the picture.</p></div>';
  $('reveal').textContent=revealed?'◉ Hide picture':'✿ Reveal picture';
  $('reveal').setAttribute('aria-pressed',String(revealed));
 }
 function toggleArt(){revealed=!revealed;renderArt()}
-let speaking=false,utterance=null;
-function stopSpeech(){if('speechSynthesis' in window){window.speechSynthesis.cancel()}speaking=false;utterance=null;let b=document.getElementById('speak');if(b)b.textContent='🔊 Read aloud'}
+let speaking=false,utterance=null,speechToken=0;
+function speechButton(label){const b=$('speak');if(b)b.textContent=label}
+function stopSpeech(){speechToken++;speaking=false;utterance=null;speechButton('🔊 Read aloud');try{window.speechSynthesis?.cancel()}catch(e){}}
 function speakPage(){
- if(!('speechSynthesis' in window)){alert('Read aloud is not supported in this browser. Try Safari or Chrome.');return}
+ if(!('speechSynthesis' in window)){alert('This browser does not support speech playback. Open the site in Safari.');return}
  if(speaking){stopSpeech();return}
- stopSpeech();
- const u=new SpeechSynthesisUtterance(current.pages[page]);utterance=u;
- u.lang='en-US';u.rate=0.78;u.pitch=1.04;u.volume=1;
- const voices=window.speechSynthesis.getVoices();const preferred=voices.find(v=>v.lang.toLowerCase().startsWith('en')&&/samantha|ava|allison|female/i.test(v.name))||voices.find(v=>v.lang.toLowerCase().startsWith('en'));
- if(preferred)u.voice=preferred;
- u.onstart=()=>{speaking=true;document.getElementById('speak').textContent='■ Stop reading'};
- u.onend=u.onerror=()=>{speaking=false;document.getElementById('speak').textContent='🔊 Read aloud'};
- // Trigger speech immediately inside the user gesture for Safari/iOS.
- speaking=true;document.getElementById('speak').textContent='■ Stop reading';
- window.speechSynthesis.speak(u);
+ // iPad Safari requires the speak call to occur synchronously in a direct tap.
+ const synth=window.speechSynthesis;try{synth.cancel()}catch(e){}
+ const token=++speechToken;const u=new SpeechSynthesisUtterance(current.pages[page]);utterance=u;
+ u.lang='en-US';u.rate=.82;u.pitch=1;u.volume=1;
+ const voices=synth.getVoices();const voice=voices.find(v=>v.lang==='en-US'&&v.localService)||voices.find(v=>v.lang.startsWith('en'));if(voice)u.voice=voice;
+ u.onstart=()=>{if(token===speechToken){speaking=true;speechButton('■ Stop reading')}};
+ u.onend=()=>{if(token===speechToken){speaking=false;utterance=null;speechButton('🔊 Read aloud')}};
+ u.onerror=(e)=>{if(token!==speechToken)return; speaking=false;utterance=null;speechButton('🔊 Read aloud');if(e.error!=='canceled'&&e.error!=='interrupted')alert('Audio could not start ('+e.error+'). Check iPad volume, Silent Mode, and open directly in Safari.')};
+ speaking=true;speechButton('■ Stop reading');
+ try{synth.speak(u);if(synth.paused)synth.resume()}catch(e){speaking=false;speechButton('🔊 Read aloud');alert('Unable to start speech: '+e.message)}
 }
 function turn(delta){if(page===current.pages.length-1&&delta===1){localStorage.setItem('read-'+current.id,'yes');showLibrary();return}page=Math.max(0,Math.min(current.pages.length-1,page+delta));renderPage();scrollTo(0,0)}
 function showParent(){origin=current?'reader':'library';$('library').classList.add('hidden');$('reader').classList.add('hidden');$('parent').classList.remove('hidden');$('parentBooks').innerHTML=BOOKS.map(b=>`<article><h3>${escapeHTML(b.title)}</h3><small>${escapeHTML(b.level)}</small><ol>${b.pages.map(s=>`<li>${escapeHTML(s)}</li>`).join('')}</ol></article>`).join('');scrollTo(0,0)}
 function backFromParent(){if(origin==='reader'&&current){$('parent').classList.add('hidden');$('reader').classList.remove('hidden')}else showLibrary()}
-fetch('./books.json?v=7').then(r=>{if(!r.ok)throw Error('Failed to load books');return r.json()}).then(data=>{BOOKS=data;renderShelf()}).catch(e=>{$('books').textContent='Could not load the books. Please refresh. '+e.message});
+fetch('./books.json?v=9').then(r=>{if(!r.ok)throw Error('Failed to load books');return r.json()}).then(data=>{BOOKS=data;renderShelf()}).catch(e=>{$('books').textContent='Could not load the books. Please refresh. '+e.message});
 </script></body></html>
