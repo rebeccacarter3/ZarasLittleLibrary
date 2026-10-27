@@ -1,0 +1,58 @@
+[
+  {
+    "id": "kit",
+    "title": "Kit and the Red Hat",
+    "short": "Kit and the Hat",
+    "type": "cat",
+    "level": "Short vowels \u00b7 CVC \u00b7 blends",
+    "pages": [
+      "Kit is a cat.",
+      "Kit has a red hat.",
+      "A big gust hits the hat.",
+      "The hat lands in the mud.",
+      "Kit is sad.",
+      "Pip can get the hat.",
+      "Kit and Pip sit. The hat is wet.",
+      "The hat will dry in the sun."
+    ],
+    "parentHelp": {
+      "8": [
+        "dry \u2014 vowel team y; parent-assisted"
+      ]
+    }
+  },
+  {
+    "id": "pip",
+    "title": "Pip and the Big Egg",
+    "short": "The Big Egg",
+    "type": "dino",
+    "level": "Short vowels \u00b7 CVC \u00b7 blends",
+    "pages": [
+      "Pip has a big egg.",
+      "The egg is in the nest.",
+      "The wind hits the nest.",
+      "The egg tips to the rim.",
+      "Pip runs to the nest.",
+      "Kit can help Pip.",
+      "Kit and Pip fix the nest.",
+      "The egg is snug. Pip is glad."
+    ]
+  },
+  {
+    "id": "sam",
+    "title": "Sam and the Fun Trip",
+    "short": "A Fun Trip",
+    "type": "plane",
+    "level": "Short vowels \u00b7 CVC \u00b7 blends",
+    "pages": [
+      "Sam has a red jet.",
+      "Kit and Pip can get in.",
+      "The jet is set to go.",
+      "Sam can lift the jet.",
+      "The jet is up in the sun.",
+      "Kit can spot a pond.",
+      "Sam lands the jet.",
+      "Kit and Pip grin. It is fun."
+    ]
+  }
+]

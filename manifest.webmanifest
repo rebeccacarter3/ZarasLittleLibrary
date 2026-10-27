@@ -1,0 +1,16 @@
+{
+  "name": "Zara's Little Library",
+  "short_name": "Zara's Library",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5ecd9",
+  "theme_color": "#f5ecd9",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
