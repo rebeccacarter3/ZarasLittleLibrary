@@ -61,44 +61,103 @@
  background-image:url('assets/approved-landing.jpg');background-repeat:no-repeat;
  box-shadow:0 12px 28px #2f1b1390;will-change:transform,opacity}
 @media(prefers-reduced-motion:reduce){.selection-cover{display:none}}
-</style></head><body><main id="home" class="home"><img src="assets/approved-landing.jpg" alt="Zara's Little Library: vintage illustrated bookshelf with Kit, Sara, and Sam, and a welcome storybook"><button class="hotspot one" aria-label="Open Kit and the Red Hat" data-book="kit"></button><button class="hotspot two" aria-label="Open Sara and the Big Egg" data-book="sara"></button><button class="hotspot three" aria-label="Open Sam’s Fun Trip" data-book="sam"></button><svg class="flying-butterfly" id="flying-butterfly" viewBox="0 0 100 100" aria-hidden="true"><g class="wing-left"><path d="M49 52C18 6 3 16 9 43c-9 16 11 33 40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><path d="M43 48C21 18 15 26 21 43" fill="none" stroke="#9b6c45" stroke-width="3"/><circle cx="16" cy="37" r="4" fill="#fff3d5"/></g><g class="wing-right"><path d="M51 52C82 6 97 16 91 43c9 16-11 33-40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><path d="M57 48C79 18 85 26 79 43" fill="none" stroke="#9b6c45" stroke-width="3"/><circle cx="84" cy="37" r="4" fill="#fff3d5"/></g><path d="M50 37v28" stroke="#4d352a" stroke-width="5" stroke-linecap="round"/><path d="M49 39Q38 20 34 25M51 39Q62 20 66 25" stroke="#4d352a" stroke-width="2" fill="none"/></svg><button type="button" class="butterfly-tap" id="butterfly-tap" aria-label="Make the welcome butterfly flutter" title="Tap the butterfly"></button><svg class="flying-butterfly right-flight" id="flying-butterfly-right" viewBox="0 0 100 100" aria-hidden="true"><g class="wing-left"><path d="M49 52C18 6 3 16 9 43c-9 16 11 33 40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><circle cx="16" cy="37" r="4" fill="#fff3d5"/></g><g class="wing-right"><path d="M51 52C82 6 97 16 91 43c9 16-11 33-40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><circle cx="84" cy="37" r="4" fill="#fff3d5"/></g><path d="M50 37v28" stroke="#4d352a" stroke-width="5" stroke-linecap="round"/><path d="M49 39Q38 20 34 25M51 39Q62 20 66 25" stroke="#4d352a" stroke-width="2" fill="none"/></svg><button type="button" class="butterfly-tap-right" id="butterfly-tap-right" aria-label="Make the butterfly on the right page flutter" title="Tap the butterfly"></button><span class="propeller-spin" id="propeller-spin" aria-hidden="true"><svg viewBox="0 0 100 100"><ellipse cx="50" cy="26" rx="10" ry="24" fill="#f6e3bd" stroke="#b89c72" stroke-width="2"/><ellipse cx="50" cy="74" rx="10" ry="24" fill="#f6e3bd" stroke="#b89c72" stroke-width="2"/><circle cx="50" cy="50" r="9" fill="#b28c60"/></svg></span><button type="button" class="propeller-tap" id="propeller-tap" aria-label="Spin Sam's airplane propeller" title="Tap to spin the propeller"></button></main><main id="reader" class="reader hide"><header class="reader-header"><button class="pill" id="back">‹ Bookshelf</button><div><h1 id="title"></h1><small id="count"></small></div><button class="pill" id="restart">↻ Start</button></header><section class="book" aria-label="Open storybook"><div class="page left"><span class="corner" aria-hidden="true">❧</span><div class="text-panel"><div class="sentence" id="sentence" aria-live="polite"></div><input class="slider" id="slider" type="range" min="0" max="100" value="0" aria-label="Slide to highlight words as you read"><div class="slider-label">Slide to read →</div><div class="controls"><button class="pill" id="font">A+ Larger text</button><button class="pill" id="again">↺ Start again</button></div></div></div><div class="page right"><span class="corner r" aria-hidden="true">❧</span><div class="picture-shell" id="picture-shell"><div class="placeholder" id="placeholder" aria-hidden="true">✿</div><img class="picture hide" id="picture" alt=""></div><button class="pill reveal" id="reveal">◉ Reveal picture</button></div></section><nav class="nav"><button class="pill" id="prev">‹ Previous</button><button class="pill" id="next">Next ›</button></nav></main><script>
+</style>
+<style id="storybook-transition-style">
+/* A temporary, decorative 3D animation. All reading controls remain real HTML. */
+.story-transition{position:fixed;inset:0;z-index:9999;pointer-events:none;perspective:1300px;overflow:hidden}
+.story-dim{position:absolute;inset:0;background:rgba(51,30,20,.36);animation:storyDim 3.2s ease both}
+.story-welcome{position:absolute;left:50%;top:62%;width:min(83vw,750px);aspect-ratio:1.95/1;
+ transform:translate(-50%,-50%) rotateX(0deg) scale(.7);transform-style:preserve-3d;
+ animation:welcomeLift 3.15s cubic-bezier(.25,.7,.2,1) both}
+.story-welcome-base{position:absolute;inset:0;border-radius:9px 9px 22px 22px;
+ background:#f6e9d0 url('assets/approved-landing.jpg') center 91%/155% auto no-repeat;
+ border:8px solid #82543c;box-shadow:0 20px 42px #2c160f90,inset 0 0 20px #8b694e55;
+ overflow:hidden}
+.story-page-flip{position:absolute;left:50%;top:3%;width:47%;height:94%;
+ background:linear-gradient(90deg,#d9bd93,#fff7e6 14%,#fff2d8 90%,#cfae80);
+ border-radius:4px 12px 14px 4px;border:1px solid #b68c62;
+ transform-origin:left center;transform-style:preserve-3d;backface-visibility:visible;
+ box-shadow:3px 3px 8px #5b392338;opacity:0}
+.story-page-flip::after{content:"";position:absolute;inset:7%;border-left:1px solid #d2b78f;border-right:1px solid #e6d3b4;opacity:.65}
+.story-cover{position:absolute;z-index:4;left:50%;top:3%;width:47%;height:94%;border-radius:4px 14px 14px 4px;
+ transform-origin:left center;transform-style:preserve-3d;backface-visibility:hidden;
+ background:#f4e8d0;border:5px solid #9d704e;box-shadow:7px 8px 14px #44291d66;
+ animation:coverOpen 3.15s ease-in-out both}
+.story-cover-art{position:absolute;inset:0;background-image:url('assets/approved-landing.jpg');background-repeat:no-repeat;background-size:var(--crop-size);
+ background-position:var(--crop-position);border-radius:3px 9px 9px 3px}
+.story-spark{position:absolute;left:50%;top:50%;font-size:clamp(14px,2.4vw,30px);color:#ffe6a3;
+ text-shadow:0 0 9px #ffcf67,0 0 18px #ffbd55;animation:sparkDance 2.8s ease-out both}
+@keyframes storyDim{0%{opacity:0}15%,77%{opacity:1}100%{opacity:0}}
+@keyframes welcomeLift{0%{opacity:0;transform:translate(-50%,-37%) rotateX(25deg) scale(.55)}
+ 14%{opacity:1}40%{transform:translate(-50%,-50%) rotateX(14deg) rotateZ(-2deg) scale(.88)}
+ 70%{transform:translate(-50%,-50%) rotateX(8deg) rotateZ(1deg) scale(1.05)}
+ 88%{opacity:1;transform:translate(-50%,-50%) rotateX(0deg) scale(1.24)}
+ 100%{opacity:0;transform:translate(-50%,-50%) rotateX(0deg) scale(1.48)}}
+@keyframes coverOpen{0%,19%{transform:rotateY(0deg);opacity:1}
+ 43%{transform:rotateY(-155deg);opacity:.96}65%{transform:rotateY(-175deg);opacity:.3}
+ 100%{transform:rotateY(-180deg);opacity:0}}
+@keyframes rapidFlip{0%,24%{opacity:0;transform:rotateY(0deg)}
+ 28%{opacity:1}65%{opacity:1;transform:rotateY(-179deg)}
+ 69%,100%{opacity:0;transform:rotateY(-179deg)}}
+@keyframes sparkDance{0%{opacity:0;transform:translate(0,0) scale(.2) rotate(0deg)}
+ 24%{opacity:1}75%{opacity:.95}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.2) rotate(140deg)}}
+@media(prefers-reduced-motion:reduce){.story-transition{display:none!important}}
+</style>
+</head><body><main id="home" class="home"><img src="assets/approved-landing.jpg" alt="Zara's Little Library: vintage illustrated bookshelf with Kit, Sara, and Sam, and a welcome storybook"><button class="hotspot one" aria-label="Open Kit and the Red Hat" data-book="kit"></button><button class="hotspot two" aria-label="Open Sara and the Big Egg" data-book="sara"></button><button class="hotspot three" aria-label="Open Sam’s Fun Trip" data-book="sam"></button><svg class="flying-butterfly" id="flying-butterfly" viewBox="0 0 100 100" aria-hidden="true"><g class="wing-left"><path d="M49 52C18 6 3 16 9 43c-9 16 11 33 40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><path d="M43 48C21 18 15 26 21 43" fill="none" stroke="#9b6c45" stroke-width="3"/><circle cx="16" cy="37" r="4" fill="#fff3d5"/></g><g class="wing-right"><path d="M51 52C82 6 97 16 91 43c9 16-11 33-40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><path d="M57 48C79 18 85 26 79 43" fill="none" stroke="#9b6c45" stroke-width="3"/><circle cx="84" cy="37" r="4" fill="#fff3d5"/></g><path d="M50 37v28" stroke="#4d352a" stroke-width="5" stroke-linecap="round"/><path d="M49 39Q38 20 34 25M51 39Q62 20 66 25" stroke="#4d352a" stroke-width="2" fill="none"/></svg><button type="button" class="butterfly-tap" id="butterfly-tap" aria-label="Make the welcome butterfly flutter" title="Tap the butterfly"></button><svg class="flying-butterfly right-flight" id="flying-butterfly-right" viewBox="0 0 100 100" aria-hidden="true"><g class="wing-left"><path d="M49 52C18 6 3 16 9 43c-9 16 11 33 40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><circle cx="16" cy="37" r="4" fill="#fff3d5"/></g><g class="wing-right"><path d="M51 52C82 6 97 16 91 43c9 16-11 33-40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><circle cx="84" cy="37" r="4" fill="#fff3d5"/></g><path d="M50 37v28" stroke="#4d352a" stroke-width="5" stroke-linecap="round"/><path d="M49 39Q38 20 34 25M51 39Q62 20 66 25" stroke="#4d352a" stroke-width="2" fill="none"/></svg><button type="button" class="butterfly-tap-right" id="butterfly-tap-right" aria-label="Make the butterfly on the right page flutter" title="Tap the butterfly"></button><span class="propeller-spin" id="propeller-spin" aria-hidden="true"><svg viewBox="0 0 100 100"><ellipse cx="50" cy="26" rx="10" ry="24" fill="#f6e3bd" stroke="#b89c72" stroke-width="2"/><ellipse cx="50" cy="74" rx="10" ry="24" fill="#f6e3bd" stroke="#b89c72" stroke-width="2"/><circle cx="50" cy="50" r="9" fill="#b28c60"/></svg></span><button type="button" class="propeller-tap" id="propeller-tap" aria-label="Spin Sam's airplane propeller" title="Tap to spin the propeller"></button></main><main id="reader" class="reader hide"><header class="reader-header"><button class="pill" id="back">‹ Bookshelf</button><div><h1 id="title"></h1><small id="count"></small></div><button class="pill" id="restart">↻ Start</button></header><section class="book" aria-label="Open storybook"><div class="page left"><span class="corner" aria-hidden="true">❧</span><div class="text-panel"><div class="sentence" id="sentence" aria-live="polite"></div><input class="slider" id="slider" type="range" min="0" max="100" value="0" aria-label="Slide to highlight words as you read"><div class="slider-label">Slide to read →</div><div class="controls"><button class="pill" id="font">A+ Larger text</button><button class="pill" id="again">↺ Start again</button></div></div></div><div class="page right"><span class="corner r" aria-hidden="true">❧</span><div class="picture-shell" id="picture-shell"><div class="placeholder" id="placeholder" aria-hidden="true">✿</div><img class="picture hide" id="picture" alt=""></div><button class="pill reveal" id="reveal">◉ Reveal picture</button></div></section><nav class="nav"><button class="pill" id="prev">‹ Previous</button><button class="pill" id="next">Next ›</button></nav></main><script>
 const butterflyTap=document.getElementById('butterfly-tap'),flyingButterfly=document.getElementById('flying-butterfly');butterflyTap.addEventListener('click',()=>{flyingButterfly.classList.remove('fly');void flyingButterfly.getBoundingClientRect();flyingButterfly.classList.add('fly')});flyingButterfly.addEventListener('animationend',e=>{if(e.animationName==='butterfly-flight')flyingButterfly.classList.remove('fly')});const rightButterfly=document.getElementById('flying-butterfly-right');document.getElementById('butterfly-tap-right').addEventListener('click',()=>{rightButterfly.classList.remove('fly');void rightButterfly.getBoundingClientRect();rightButterfly.classList.add('fly')});rightButterfly.addEventListener('animationend',e=>{if(e.animationName==='butterfly-flight')rightButterfly.classList.remove('fly')});let propellerTimeout;document.getElementById('propeller-tap').addEventListener('click',()=>{const prop=document.getElementById('propeller-spin');clearTimeout(propellerTimeout);prop.classList.remove('spinning');void prop.getBoundingClientRect();prop.classList.add('spinning');propellerTimeout=setTimeout(()=>prop.classList.remove('spinning'),2300)});
 const fallback={books:[{id:'kit',title:'Kit and the Red Hat',pages:[{text:'Kit is a cat.',image:'assets/01-kit-is-a-cat.png'},{text:'Kit has a red hat.',image:'assets/02-kit-has-a-red-hat.png'},{text:'A big gust of wind hits the hat.',image:'assets/03-a-big-gust-of-wind.png'},{text:'The hat lands in the mud.',image:'assets/04-hat-lands-in-mud.png'},{text:'Kit is sad. The hat is wet.',image:'assets/05-kit-is-sad.png'},{text:'Pip can help get the hat.',image:'assets/06-pip-gets-the-hat.png'},{text:'The hat will dry in the sun.',image:'assets/07-hat-dries-in-sun.png'},{text:'Kit is glad for Pip’s help.',image:'assets/08-kit-thanks-pip.png'}]}]};let library=fallback,book=null,page=0,revealed=false,large=false;const $=id=>document.getElementById(id);fetch('books.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error();return r.json()}).then(x=>library=x).catch(()=>{});function home(){book=null;$('reader').classList.add('hide');$('home').classList.remove('hide');history.replaceState({},'',location.pathname)}function openBook(id){let b=library.books.find(x=>x.id===id);if(!b||!b.pages.length){alert('This story is coming soon!');return}book=b;page=0;large=false;$('sentence').classList.remove('large');$('font').textContent='A+ Larger text';$('home').classList.add('hide');$('reader').classList.remove('hide');history.replaceState({},'',location.pathname+'#'+id);render();scrollTo({top:0,behavior:'instant'})}function words(){return book.pages[page].text.match(/\S+/g)||[]}function highlight(){const list=[...$('sentence').querySelectorAll('.word')],progress=Number($('slider').value),active=progress===0?0:Math.min(list.length-1,Math.ceil(progress/100*list.length)-1);list.forEach((el,i)=>el.classList.toggle('active',i===active))}function render(){if(!book)return;revealed=false;$('title').textContent=book.title;$('count').textContent=`Page ${page+1} of ${book.pages.length}`;$('sentence').replaceChildren(...words().map((w,i)=>{let s=document.createElement('span');s.className='word';s.textContent=w;return s}));$('slider').value=0;highlight();$('picture').src=book.pages[page].image;$('picture').alt=`Watercolor illustration for: ${book.pages[page].text}`;$('picture').classList.add('hide');$('placeholder').classList.remove('hide');$('reveal').textContent='◉ Reveal picture';$('prev').disabled=page===0;$('next').disabled=page===book.pages.length-1;$('picture-shell').classList.remove('fade');void $('picture-shell').offsetWidth;$('picture-shell').classList.add('fade')}function togglePicture(){revealed=!revealed;$('picture').classList.toggle('hide',!revealed);$('placeholder').classList.toggle('hide',revealed);$('reveal').textContent=revealed?'◉ Hide picture':'◉ Reveal picture'}let selecting=false;
 function selectWithTransition(button){
  if(selecting)return;
  const id=button.dataset.book;
  const selected=library.books.find(x=>x.id===id);
- if(!selected||!selected.pages||!selected.pages.length){openBook(id);return;}
- if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){openBook(id);return;}
+ if(!selected||!selected.pages||!selected.pages.length){openBook(id);return}
+ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){openBook(id);return}
  selecting=true;
- let cover=null,finished=false;
- const finish=()=>{if(finished)return;finished=true;if(cover)cover.remove();selecting=false;openBook(id)};
- // A guaranteed fallback opens the book even when transitions are unsupported.
- const fallbackTimer=setTimeout(finish,950);
+ let overlay=null,finished=false;
+ const finish=()=>{if(finished)return;finished=true;overlay?.remove();selecting=false;openBook(id)};
+ // Time-based completion is deliberate: page flipping never blocks opening the story.
+ const watchdog=setTimeout(finish,3650);
  try{
-  const image=document.querySelector('#home > img');
-  const ir=image.getBoundingClientRect(),r=button.getBoundingClientRect();
-  if(!ir.width||!r.width){clearTimeout(fallbackTimer);finish();return;}
-  cover=document.createElement('div');cover.className='selection-cover';
-  Object.assign(cover.style,{
-   left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',
-   backgroundSize:ir.width+'px '+ir.height+'px',
-   backgroundPosition:(ir.left-r.left)+'px '+(ir.top-r.top)+'px',
-   transformOrigin:'center center',transition:'transform 680ms cubic-bezier(.22,.68,.2,1), opacity 680ms ease',
-   transform:'translate(0,0) scale(1)',opacity:'1'
-  });
-  document.body.appendChild(cover);
-  const scale=Math.min(2.25,Math.max(1.35,window.innerHeight/(r.height*1.55)));
-  const dx=window.innerWidth/2-(r.left+r.width/2),dy=window.innerHeight/2-(r.top+r.height/2);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-   if(finished)return;
-   cover.style.transform=`translate(${dx}px, ${dy}px) scale(${scale})`;
-   cover.style.opacity='0';
-  }));
-  cover.addEventListener('transitionend',e=>{
-   if(e.propertyName==='opacity'){clearTimeout(fallbackTimer);finish();}
-  },{once:false});
- }catch(e){clearTimeout(fallbackTimer);finish();}
+  const img=document.querySelector('#home > img');
+  const ir=img.getBoundingClientRect(),br=button.getBoundingClientRect();
+  if(!ir.width||!br.width){clearTimeout(watchdog);finish();return}
+  overlay=document.createElement('div');overlay.className='story-transition';
+  overlay.setAttribute('aria-hidden','true');
+  const dim=document.createElement('div');dim.className='story-dim';overlay.appendChild(dim);
+  const bookShell=document.createElement('div');bookShell.className='story-welcome';
+  const base=document.createElement('div');base.className='story-welcome-base';bookShell.appendChild(base);
+  // The existing shelf artwork is used as the cover; no extra images or JSON needed.
+  const cover=document.createElement('div');cover.className='story-cover';
+  const coverArt=document.createElement('div');coverArt.className='story-cover-art';
+  const scale=bookShell.getBoundingClientRect().width || Math.min(innerWidth*.83,750);
+  const cropW=scale*.47, cropH=scale/1.95*.94;
+  const sourceScale=cropW/br.width;
+  coverArt.style.setProperty('--crop-size',`${ir.width*sourceScale}px ${ir.height*sourceScale}px`);
+  coverArt.style.setProperty('--crop-position',`${(ir.left-br.left)*sourceScale}px ${(ir.top-br.top)*sourceScale}px`);
+  cover.appendChild(coverArt);bookShell.appendChild(cover);
+  for(let i=0;i<11;i++){
+    const leaf=document.createElement('div');leaf.className='story-page-flip';
+    leaf.style.animation=`rapidFlip ${.60+i*.065}s ease-in-out ${.45+i*.105}s both`;
+    leaf.style.zIndex=3+i;
+    bookShell.appendChild(leaf);
+  }
+  // Keep the illustrated cover above the fluttering pages until it opens.
+  cover.style.zIndex=30;
+  overlay.appendChild(bookShell);
+  for(let i=0;i<24;i++){
+    const star=document.createElement('span');star.className='story-spark';
+    star.textContent=i%3===0?'✦':'✧';
+    const a=i*2.39996;
+    const radius=70+(i%5)*32;
+    star.style.left=`${50+Math.cos(a)*19}%`;
+    star.style.top=`${50+Math.sin(a)*19}%`;
+    star.style.setProperty('--dx',`${Math.cos(a)*radius}px`);
+    star.style.setProperty('--dy',`${Math.sin(a)*radius}px`);
+    star.style.animationDelay=`${.12+(i%8)*.14}s`;
+    overlay.appendChild(star);
+  }
+  document.body.appendChild(overlay);
+ }catch(err){clearTimeout(watchdog);finish()}
 }
 document.querySelectorAll('[data-book]').forEach(b=>b.addEventListener('click',()=>selectWithTransition(b)));$('back').onclick=home;$('restart').onclick=()=>{page=0;render()};$('again').onclick=()=>{$('slider').value=0;highlight()};$('font').onclick=()=>{large=!large;$('sentence').classList.toggle('large',large);$('font').textContent=large?'A− Smaller text':'A+ Larger text'};$('slider').oninput=highlight;$('reveal').onclick=togglePicture;$('prev').onclick=()=>{if(page>0){page--;render();window.scrollTo(0,0)}};$('next').onclick=()=>{if(page<book.pages.length-1){page++;render();window.scrollTo(0,0)}};document.addEventListener('keydown',e=>{if(!book||['INPUT','BUTTON'].includes(document.activeElement.tagName))return;if(e.key==='ArrowRight'&&page<book.pages.length-1){page++;render()}if(e.key==='ArrowLeft'&&page>0){page--;render()}});window.addEventListener('hashchange',()=>{if(!location.hash)home()});
 
