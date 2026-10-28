@@ -1,16 +1,1 @@
-{
-  "name": "Zara's Little Library",
-  "short_name": "Zara's Library",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#f5ecd9",
-  "theme_color": "#f5ecd9",
-  "icons": [
-    {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
-}
+{"name":"Zara’s Little Library","short_name":"Zara’s Library","start_url":"./","scope":"./","display":"standalone","background_color":"#f6e8ce","theme_color":"#885c3b","icons":[{"src":"assets/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"assets/icon-512.png","sizes":"512x512","type":"image/png"}]}
