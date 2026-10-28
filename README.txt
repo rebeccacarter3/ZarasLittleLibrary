@@ -1,1 +1,22 @@
-Zara’s Little Library — story artwork build v9. Upload ALL files at the root of your Cloudflare Worker static assets / site. Eight separate kit-page-1.webp through kit-page-8.webp watercolor scenes. Home shelf preserved. Reader images hidden initially, single reveal button. Browser speech synthesis needs an unmuted device and direct user tap; voice availability depends on device/browser. Test read aloud in Safari. If old version remains, clear website data / installed PWA cache.
+ZARA'S LITTLE LIBRARY — THREE-LAYER READING INTERFACE
+
+Upload index.html, books.json and the entire assets/ folder to your GitHub repository.
+Cloudflare Workers must serve these static files at the site root.
+
+Landing artwork: the exact approved image supplied in conversation.
+The invisible book-cover click targets are placed over that image.
+Only Kit and the Red Hat is active. Sara and Sam show a coming-soon message.
+
+Reading interface: CSS-drawn book, separate text and controls, 8 separate image assets.
+The pictures start hidden and one functional Reveal/Hide button controls visibility.
+No read-aloud feature (removed per earlier request).
+
+IMPORTANT ARTWORK NOTE:
+The eight available page illustrations are older, relatively low-resolution assets
+and show a GREEN triceratops named Pip, rather than the lavender Sara character on
+the approved landing image. They are retained as interim story art, not newly
+approved final art. Replace each file in assets/ with a full-resolution final
+illustration using the same filename when available. No artwork is baked into
+the reader controls.
+
+To preview locally, use a static HTTP server (e.g. python -m http.server 8000).

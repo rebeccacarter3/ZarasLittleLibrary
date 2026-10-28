@@ -1,62 +1,16 @@
-[
-  {
-    "id": "kit",
-    "title": "Kit and the Red Hat",
-    "short": "Kit and the Hat",
-    "type": "cat",
-    "level": "Short vowels · CVC · blends",
-    "pages": [
-      "Kit is a cat.",
-      "Kit has a red hat.",
-      "A big gust of wind hits the hat.",
-      "The hat lands in the mud.",
-      "Kit is sad. The hat is wet.",
-      "Pip can get the hat.",
-      "The hat will dry in the sun.",
-      "Kit is glad for Pip’s help."
-    ],
-    "parentHelp": {
-      "7": [
-        "dry — parent-assisted"
-      ],
-      "8": [
-        "glad — consonant blend",
-        "help — consonant blend"
-      ]
-    }
-  },
-  {
-    "id": "pip",
-    "title": "Pip and the Big Egg",
-    "short": "The Big Egg",
-    "type": "dino",
-    "level": "Short vowels · CVC · blends",
-    "pages": [
-      "Pip has a big egg.",
-      "The egg is in the nest.",
-      "The wind hits the nest.",
-      "The egg tips to the rim.",
-      "Pip runs to the nest.",
-      "Kit can help Pip.",
-      "Kit and Pip fix the nest.",
-      "The egg is snug. Pip is glad."
-    ]
-  },
-  {
-    "id": "sam",
-    "title": "Sam and the Fun Trip",
-    "short": "A Fun Trip",
-    "type": "plane",
-    "level": "Short vowels · CVC · blends",
-    "pages": [
-      "Sam has a red jet.",
-      "Kit and Pip can get in.",
-      "The jet is set to go.",
-      "Sam can lift the jet.",
-      "The jet is up in the sun.",
-      "Kit can spot a pond.",
-      "Sam lands the jet.",
-      "Kit and Pip grin. It is fun."
-    ]
-  }
-]
+{
+  "books": [
+    {"id":"kit","title":"Kit and the Red Hat","pages":[
+      {"text":"Kit is a cat.","image":"assets/01-kit-is-a-cat.png"},
+      {"text":"Kit has a red hat.","image":"assets/02-kit-has-a-red-hat.png"},
+      {"text":"A big gust of wind hits the hat.","image":"assets/03-a-big-gust-of-wind.png"},
+      {"text":"The hat lands in the mud.","image":"assets/04-hat-lands-in-mud.png"},
+      {"text":"Kit is sad. The hat is wet.","image":"assets/05-kit-is-sad.png"},
+      {"text":"Pip can help get the hat.","image":"assets/06-pip-gets-the-hat.png"},
+      {"text":"The hat will dry in the sun.","image":"assets/07-hat-dries-in-sun.png"},
+      {"text":"Kit is glad for Pip’s help.","image":"assets/08-kit-thanks-pip.png"}
+    ]},
+    {"id":"sara","title":"Sara and the Big Egg","pages":[]},
+    {"id":"sam","title":"Sam’s Fun Trip","pages":[]}
+  ]
+}
