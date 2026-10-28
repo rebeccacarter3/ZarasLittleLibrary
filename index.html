@@ -68,7 +68,7 @@
 .story-dim{position:absolute;inset:0;background:rgba(51,30,20,.36);animation:storyDim 4.0s ease-in-out both}
 .story-welcome{position:absolute;left:50%;top:62%;width:min(83vw,750px);aspect-ratio:1.95/1;
  transform:translate(-50%,-50%) rotateX(0deg) scale(.7);transform-style:preserve-3d;
- animation:welcomeLift 3.85s cubic-bezier(.45,0,.2,1) both;will-change:transform,opacity}
+ animation:welcomeLift 3.85s cubic-bezier(.38,.04,.25,1) both;will-change:transform,opacity}
 .story-welcome-base{position:absolute;inset:0;border-radius:9px 9px 22px 22px;
  background:#f6e9d0 url('assets/approved-landing.jpg') center 91%/155% auto no-repeat;
  border:8px solid #82543c;box-shadow:0 20px 42px #2c160f90,inset 0 0 20px #8b694e55;
@@ -91,11 +91,13 @@
 @keyframes storyDim{0%{opacity:0}15%,77%{opacity:1}100%{opacity:0}}
 @keyframes welcomeLift{
  0%{opacity:0;transform:translate3d(-50%,-43%,0) rotateX(15deg) scale(.68)}
- 12%{opacity:1;transform:translate3d(-50%,-48%,0) rotateX(13deg) scale(.74)}
- 35%{opacity:1;transform:translate3d(-50%,-50%,0) rotateX(10deg) rotateZ(-1deg) scale(.87)}
- 60%{opacity:1;transform:translate3d(-50%,-50%,0) rotateX(6deg) rotateZ(0deg) scale(1.02)}
- 82%{opacity:1;transform:translate3d(-50%,-50%,0) rotateX(2deg) scale(1.17)}
- 94%{opacity:.82;transform:translate3d(-50%,-50%,0) rotateX(0deg) scale(1.27)}
+ 10%{opacity:1;transform:translate3d(-50%,-45%,0) rotateX(14deg) scale(.71)}
+ 25%{opacity:1;transform:translate3d(-50%,-48%,0) rotateX(12deg) scale(.78)}
+ 42%{opacity:1;transform:translate3d(-50%,-50%,0) rotateX(9deg) rotateZ(-.5deg) scale(.88)}
+ 60%{opacity:1;transform:translate3d(-50%,-50%,0) rotateX(6deg) scale(1.01)}
+ 76%{opacity:1;transform:translate3d(-50%,-50%,0) rotateX(3deg) scale(1.14)}
+ 88%{opacity:1;transform:translate3d(-50%,-50%,0) rotateX(1deg) scale(1.23)}
+ 96%{opacity:.6;transform:translate3d(-50%,-50%,0) rotateX(0deg) scale(1.29)}
  100%{opacity:0;transform:translate3d(-50%,-50%,0) rotateX(0deg) scale(1.30)}
 }
 @keyframes coverOpen{0%,19%{transform:rotateY(0deg);opacity:1}
@@ -168,9 +170,11 @@ function selectWithTransition(button){
   coverArt.style.setProperty('--crop-size',`${ir.width*sourceScale}px ${ir.height*sourceScale}px`);
   coverArt.style.setProperty('--crop-position',`${(ir.left-br.left)*sourceScale}px ${(ir.top-br.top)*sourceScale}px`);
   cover.appendChild(coverArt);bookShell.appendChild(cover);
-  for(let i=0;i<11;i++){
+  for(let i=0;i<27;i++){
     const leaf=document.createElement('div');leaf.className='story-page-flip';
-    leaf.style.animation=`rapidFlip ${.70+i*.065}s ease-in-out ${.65+i*.115}s both`;
+    // Keep turning pages through the final zoom frame, with no quiet gap.
+    // Final leaf finishes just as the reading-view transition begins.
+    leaf.style.animation=`rapidFlip .72s ease-in-out ${.48+i*.108}s both`;
     leaf.style.zIndex=3+i;
     bookShell.appendChild(leaf);
   }
