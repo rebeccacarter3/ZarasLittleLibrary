@@ -65,14 +65,14 @@
 <style id="storybook-transition-style">
 /* A temporary, decorative 3D animation. All reading controls remain real HTML. */
 .story-transition{position:fixed;inset:0;z-index:9999;pointer-events:none;perspective:1300px;overflow:hidden}
-.story-dim{position:absolute;inset:0;background:rgba(51,30,20,.36);animation:storyDim 4.0s ease-in-out both}
+.story-dim{position:absolute;inset:0;background:rgba(51,30,20,.36);animation:storyDim 3.1s ease-in-out both}
 .story-welcome{position:absolute;left:50%;top:62%;width:min(83vw,750px);aspect-ratio:1.95/1;
  transform:translate(-50%,-50%) rotateX(0deg) scale(.7);transform-style:preserve-3d;
- animation:welcomeLift 3.85s cubic-bezier(.38,.04,.25,1) both;will-change:transform,opacity}
+ animation:welcomeLift 3.05s cubic-bezier(.38,.04,.25,1) both;will-change:transform,opacity}
 .story-welcome-base{position:absolute;inset:0;border-radius:9px 9px 22px 22px;
  background:#f6e9d0 url('assets/approved-landing.jpg') center 91%/155% auto no-repeat;
  border:8px solid #82543c;box-shadow:0 20px 42px #2c160f90,inset 0 0 20px #8b694e55;
- overflow:hidden;animation:goldenBookAura 3.85s ease-in-out both}
+ overflow:hidden;animation:goldenBookAura 3.05s ease-in-out both}
 .story-page-flip{position:absolute;left:50%;top:3%;width:47%;height:94%;
  background:linear-gradient(90deg,#d9bd93,#fff7e6 14%,#fff2d8 90%,#cfae80);
  border-radius:4px 12px 14px 4px;border:1px solid #b68c62;
@@ -82,11 +82,11 @@
 .story-cover{position:absolute;z-index:4;left:50%;top:3%;width:47%;height:94%;border-radius:4px 14px 14px 4px;
  transform-origin:left center;transform-style:preserve-3d;backface-visibility:hidden;
  background:#f4e8d0;border:5px solid #9d704e;box-shadow:0 0 9px #ffe8a5,0 0 22px #e8ac48a8,7px 8px 14px #44291d66;
- animation:coverOpen 3.85s ease-in-out both}
+ animation:coverOpen 3.05s ease-in-out both}
 .story-cover-art{position:absolute;inset:0;background-image:url('assets/approved-landing.jpg');background-repeat:no-repeat;background-size:var(--crop-size);
  background-position:var(--crop-position);border-radius:3px 9px 9px 3px}
 .story-spark{position:absolute;left:50%;top:50%;font-size:clamp(14px,2.4vw,30px);color:#ffe6a3;
- text-shadow:0 0 7px #fff9d4,0 0 17px #ffdb6e,0 0 34px #f5b842;filter:drop-shadow(0 0 5px #ffd36c);animation:sparkDance 3.5s ease-out both}
+ text-shadow:0 0 7px #fff9d4,0 0 17px #ffdb6e,0 0 34px #f5b842;filter:drop-shadow(0 0 5px #ffd36c);animation:sparkDance 2.9s ease-out both}
 @keyframes goldenBookAura{0%{box-shadow:0 12px 32px #2c160f70,0 0 0 #ffdf84}25%{box-shadow:0 18px 42px #2c160f90,0 0 18px 5px #ffe7a9a8,0 0 45px 10px #e9b34e80}65%{box-shadow:0 20px 45px #2c160f90,0 0 25px 9px #fff0b9cc,0 0 65px 19px #d9a34288}90%{box-shadow:0 20px 40px #2c160f70,0 0 18px 6px #ffe2a388}100%{box-shadow:0 20px 40px #2c160f30,0 0 0 #ffdf84}}
 @keyframes storyDim{0%{opacity:0}15%,77%{opacity:1}100%{opacity:0}}
 @keyframes welcomeLift{
@@ -151,7 +151,7 @@ function selectWithTransition(button){
  let overlay=null,finished=false;
  const finish=()=>{if(finished)return;finished=true;overlay?.remove();selecting=false;openBook(id);finishOpeningPages()};
  // Time-based completion is deliberate: page flipping never blocks opening the story.
- const watchdog=setTimeout(finish,4000);
+ const watchdog=setTimeout(finish,3150);
  try{
   const img=document.querySelector('#home > img');
   const ir=img.getBoundingClientRect(),br=button.getBoundingClientRect();
@@ -174,7 +174,7 @@ function selectWithTransition(button){
     const leaf=document.createElement('div');leaf.className='story-page-flip';
     // Keep turning pages through the final zoom frame, with no quiet gap.
     // Final leaf finishes just as the reading-view transition begins.
-    leaf.style.animation=`rapidFlip .72s ease-in-out ${.48+i*.108}s both`;
+    leaf.style.animation=`rapidFlip .62s ease-in-out ${.35+i*.083}s both`;
     leaf.style.zIndex=3+i;
     bookShell.appendChild(leaf);
   }
