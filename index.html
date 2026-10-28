@@ -67,26 +67,38 @@ const fallback={books:[{id:'kit',title:'Kit and the Red Hat',pages:[{text:'Kit i
 function selectWithTransition(button){
  if(selecting)return;
  const id=button.dataset.book;
- const b=library.books.find(x=>x.id===id);
- if(!b||!b.pages?.length){openBook(id);return;}
+ const selected=library.books.find(x=>x.id===id);
+ if(!selected||!selected.pages||!selected.pages.length){openBook(id);return;}
  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){openBook(id);return;}
  selecting=true;
- const homeImg=document.querySelector('#home > img');
- const imageRect=homeImg.getBoundingClientRect(),r=button.getBoundingClientRect();
- const cover=document.createElement('div');cover.className='selection-cover';
- Object.assign(cover.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',
- backgroundSize:imageRect.width+'px '+imageRect.height+'px',
- backgroundPosition:(imageRect.left-r.left)+'px '+(imageRect.top-r.top)+'px'});
- document.body.appendChild(cover);
- const scale=Math.min(2.25,Math.max(1.35,window.innerHeight/(r.height*1.55)));
- const centerX=r.left+r.width/2,centerY=r.top+r.height/2;
- const dx=window.innerWidth/2-centerX,dy=window.innerHeight/2-centerY;
- const animation=cover.animate([
- {transform:'translate(0px,0px) scale(1)',opacity:1,offset:0},
- {transform:`translate(${dx*.78}px,${dy*.78}px) scale(${scale*.91})`,opacity:1,offset:.72},
- {transform:`translate(${dx}px,${dy}px) scale(${scale})`,opacity:0,offset:1}
- ],{duration:720,easing:'cubic-bezier(.22,.68,.2,1)',fill:'forwards'});
- animation.finished.catch(()=>{}).then(()=>{cover.remove();selecting=false;openBook(id)});
+ let cover=null,finished=false;
+ const finish=()=>{if(finished)return;finished=true;if(cover)cover.remove();selecting=false;openBook(id)};
+ // A guaranteed fallback opens the book even when transitions are unsupported.
+ const fallbackTimer=setTimeout(finish,950);
+ try{
+  const image=document.querySelector('#home > img');
+  const ir=image.getBoundingClientRect(),r=button.getBoundingClientRect();
+  if(!ir.width||!r.width){clearTimeout(fallbackTimer);finish();return;}
+  cover=document.createElement('div');cover.className='selection-cover';
+  Object.assign(cover.style,{
+   left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',
+   backgroundSize:ir.width+'px '+ir.height+'px',
+   backgroundPosition:(ir.left-r.left)+'px '+(ir.top-r.top)+'px',
+   transformOrigin:'center center',transition:'transform 680ms cubic-bezier(.22,.68,.2,1), opacity 680ms ease',
+   transform:'translate(0,0) scale(1)',opacity:'1'
+  });
+  document.body.appendChild(cover);
+  const scale=Math.min(2.25,Math.max(1.35,window.innerHeight/(r.height*1.55)));
+  const dx=window.innerWidth/2-(r.left+r.width/2),dy=window.innerHeight/2-(r.top+r.height/2);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   if(finished)return;
+   cover.style.transform=`translate(${dx}px, ${dy}px) scale(${scale})`;
+   cover.style.opacity='0';
+  }));
+  cover.addEventListener('transitionend',e=>{
+   if(e.propertyName==='opacity'){clearTimeout(fallbackTimer);finish();}
+  },{once:false});
+ }catch(e){clearTimeout(fallbackTimer);finish();}
 }
 document.querySelectorAll('[data-book]').forEach(b=>b.addEventListener('click',()=>selectWithTransition(b)));$('back').onclick=home;$('restart').onclick=()=>{page=0;render()};$('again').onclick=()=>{$('slider').value=0;highlight()};$('font').onclick=()=>{large=!large;$('sentence').classList.toggle('large',large);$('font').textContent=large?'A− Smaller text':'A+ Larger text'};$('slider').oninput=highlight;$('reveal').onclick=togglePicture;$('prev').onclick=()=>{if(page>0){page--;render();window.scrollTo(0,0)}};$('next').onclick=()=>{if(page<book.pages.length-1){page++;render();window.scrollTo(0,0)}};document.addEventListener('keydown',e=>{if(!book||['INPUT','BUTTON'].includes(document.activeElement.tagName))return;if(e.key==='ArrowRight'&&page<book.pages.length-1){page++;render()}if(e.key==='ArrowLeft'&&page>0){page--;render()}});window.addEventListener('hashchange',()=>{if(!location.hash)home()});
 
