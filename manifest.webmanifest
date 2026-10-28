@@ -1,6 +1,6 @@
 {
   "name": "Zara’s Little Library",
-  "short_name": "Zara’s Library",
+  "short_name": "Zara’s Little Library",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
