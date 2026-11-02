@@ -406,12 +406,54 @@ document.querySelectorAll('[data-book]').forEach(b=>b.addEventListener('click',(
  const doorArt=document.getElementById('door-art'),roomArt=room.querySelector(':scope > img');
  const scenes=[entrance,room];
  let override=localStorage.getItem('zara-theme')||'auto';
- const nightNow=()=>{const h=new Date().getHours();return h>=19||h<7};
- function updateTheme(){const night=override==='night'||(override==='auto'&&nightNow());for(const scene of scenes){scene.classList.toggle('night',night);scene.classList.toggle('day',!night)}doorArt.src='assets/fairy-door-'+(night?'night':'day')+'.PNG';document.getElementById('door-leaf-art').src=doorArt.src;roomArt.src='assets/library-'+(night?'night':'day')+'.PNG'}
+ // Solar times are calculated locally; coordinates are never sent to a server.
+ // Until a parent opts into location, Automatic uses the original clock-based fallback.
+ const SOLAR_KEY='zara-solar-location-v1';
+ let solarLocation=null;
+ try { const saved=JSON.parse(localStorage.getItem(SOLAR_KEY));
+   if(saved&&Number.isFinite(saved.lat)&&Number.isFinite(saved.lng)&&Math.abs(saved.lat)<=90&&Math.abs(saved.lng)<=180)solarLocation=saved;
+ } catch(e){}
+ function solarMinutes(date,lat,lng){
+  const start=new Date(date.getFullYear(),0,0);
+  const day=Math.floor((new Date(date.getFullYear(),date.getMonth(),date.getDate())-start)/86400000);
+  const gamma=2*Math.PI/365*(day-1);
+  const eq=229.18*(.000075+.001868*Math.cos(gamma)-.032077*Math.sin(gamma)-.014615*Math.cos(2*gamma)-.040849*Math.sin(2*gamma));
+  const decl=.006918-.399912*Math.cos(gamma)+.070257*Math.sin(gamma)-.006758*Math.cos(2*gamma)+.000907*Math.sin(2*gamma)-.002697*Math.cos(3*gamma)+.00148*Math.sin(3*gamma);
+  const rad=Math.PI/180,phi=lat*rad;
+  const cosine=(Math.cos(90.833*rad)/(Math.cos(phi)*Math.cos(decl)))-Math.tan(phi)*Math.tan(decl);
+  if(cosine>1)return {alwaysNight:true};
+  if(cosine< -1)return {alwaysDay:true};
+  const ha=Math.acos(cosine)/rad;
+  const noon=720-4*lng-eq;
+  const base=Date.UTC(date.getFullYear(),date.getMonth(),date.getDate());
+  return {sunrise:base+(noon-4*ha)*60000,sunset:base+(noon+4*ha)*60000};
+ }
+ const nightNow=()=>{
+  const now=new Date();
+  if(solarLocation){const sun=solarMinutes(now,solarLocation.lat,solarLocation.lng);
+   if(sun.alwaysNight)return true;if(sun.alwaysDay)return false;
+   return now.getTime()<sun.sunrise||now.getTime()>=sun.sunset;
+  }
+  const h=now.getHours();return h>=19||h<7;
+ };
+ function updateTheme(){const night=override==='night'||(override==='auto'&&nightNow());for(const scene of scenes){scene.classList.toggle('night',night);scene.classList.toggle('day',!night)}doorArt.src='assets/fairy-door-'+(night?'night':'day')+'.PNG';document.getElementById('door-leaf-art').src=doorArt.src;roomArt.src='assets/library-'+(night?'night':'day')+'.PNG';document.querySelectorAll('.magic-solar-status').forEach(el=>{el.textContent=solarLocation?'Automatic uses local sunrise & sunset':'Automatic uses 7 AM / 7 PM until location is enabled'})}
  function sparkle(scene,x,y){for(let i=0;i<7;i++){const sp=document.createElement('span');sp.className='magic-spark';sp.textContent=i%2?'✦':'✧';sp.style.left=(x+(i-3)*1.7)+'%';sp.style.top=(y+(i%3)*2)+'%';scene.appendChild(sp);setTimeout(()=>sp.remove(),900)}}
  for(const scene of scenes){
   const settings=document.createElement('button');settings.className='magic-settings';settings.textContent='⚙';settings.setAttribute('aria-label','Day and night settings');scene.appendChild(settings);
   const panel=document.createElement('div');panel.className='magic-panel hide';panel.innerHTML='<label>Library lighting <select aria-label="Library lighting"><option value="auto">Automatic</option><option value="day">Daytime</option><option value="night">Nighttime</option></select></label>';scene.appendChild(panel);panel.querySelector('select').value=override;
+  const solarStatus=document.createElement('div');solarStatus.className='magic-solar-status';solarStatus.style.cssText='font:12px/1.35 Georgia,serif;margin:7px 0;color:#6a4b31;max-width:230px';panel.append(solarStatus);
+  const locate=document.createElement('button');locate.type='button';locate.textContent='☀ Use my location for sunrise & sunset';locate.style.cssText='display:block;white-space:normal;text-align:center;margin:6px auto;padding:8px 10px;border-radius:12px;border:1px solid #a98952;background:#fff4d8;color:#604323;font:13px Georgia,serif;cursor:pointer';panel.append(locate);
+  locate.onclick=()=>{
+   if(!navigator.geolocation){solarStatus.textContent='Location is unavailable on this device.';return}
+   solarStatus.textContent='Requesting location permission…';
+   navigator.geolocation.getCurrentPosition(pos=>{
+    solarLocation={lat:Math.round(pos.coords.latitude*100)/100,lng:Math.round(pos.coords.longitude*100)/100};
+    try{localStorage.setItem(SOLAR_KEY,JSON.stringify(solarLocation))}catch(e){}
+    override='auto';try{localStorage.setItem('zara-theme','auto')}catch(e){}
+    document.querySelectorAll('.magic-panel select').forEach(sel=>sel.value='auto');
+    updateTheme();
+   },()=>{solarStatus.textContent='Location not available. Choose Daytime/Nighttime, or allow location in browser settings.'},{enableHighAccuracy:false,timeout:12000,maximumAge:86400000});
+  };
   settings.onclick=()=>panel.classList.toggle('hide');panel.querySelector('select').onchange=e=>{override=e.target.value;localStorage.setItem('zara-theme',override);document.querySelectorAll('.magic-panel select').forEach(s=>s.value=override);updateTheme()};
   const lanterns=scene===entrance?[[26,18],[69,28],[94,59],[8,61]]:[[14,12],[62,13],[94,4],[23,54],[93,78]];
   for(const [x,y] of lanterns){const glow=document.createElement('span');glow.className='magic-lantern';glow.style.left=x+'%';glow.style.top=y+'%';scene.appendChild(glow)}
@@ -423,7 +465,7 @@ document.querySelectorAll('[data-book]').forEach(b=>b.addEventListener('click',(
   if(scene===entrance){const bird=document.createElement('button');bird.className='magic-hit magic-bird';bird.setAttribute('aria-label','Hear the bird chirp');bird.onclick=()=>{try{const ctx=new (window.AudioContext||window.webkitAudioContext)();const now=ctx.currentTime;for(let i=0;i<3;i++){const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(1900+i*170,now+i*.14);o.frequency.exponentialRampToValueAtTime(2850+i*150,now+i*.14+.10);g.gain.setValueAtTime(.0001,now+i*.14);g.gain.exponentialRampToValueAtTime(.07,now+i*.14+.025);g.gain.exponentialRampToValueAtTime(.0001,now+i*.14+.13);o.connect(g);g.connect(ctx.destination);o.start(now+i*.14);o.stop(now+i*.14+.14)}setTimeout(()=>ctx.close(),1100)}catch(e){}sparkle(scene,76,20)};scene.appendChild(bird)}
   const butterflies=document.createElement('button');butterflies.className='magic-hit magic-butterfly-hit';butterflies.setAttribute('aria-label','Make the butterflies flutter');butterflies.onclick=()=>sparkle(scene,scene===entrance?76:43,scene===entrance?40:19);scene.appendChild(butterflies);
  }
- updateTheme();setInterval(updateTheme,60000);
+ updateTheme();setInterval(updateTheme,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateTheme()});
  let entering=false;
  document.getElementById('door-tap').onclick=()=>{if(entering)return;entering=true;window.zaraBell?.();const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;entrance.classList.add('entering');setTimeout(()=>{entrance.classList.add('hide');room.classList.remove('hide');entrance.classList.remove('entering');entering=false},reduced?50:2650)};
  // Returning from a story goes to the library, not back through the door.
