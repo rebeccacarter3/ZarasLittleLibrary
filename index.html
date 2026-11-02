@@ -512,6 +512,90 @@ document.querySelectorAll('[data-book]').forEach(b=>b.addEventListener('click',(
  window.zaraBell=()=>{try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;const ctx=new A();ctx.resume();const t=ctx.currentTime;[0,.18].forEach((offset,i)=>{[1,2.01,3.92,5.44].forEach((partial,k)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=(i?1190:1320)*partial;g.gain.setValueAtTime(.0001,t+offset);g.gain.exponentialRampToValueAtTime(.034/(k+1),t+offset+.009);g.gain.exponentialRampToValueAtTime(.0001,t+offset+.95);o.connect(g);g.connect(ctx.destination);o.start(t+offset);o.stop(t+offset+.98)})});setTimeout(()=>ctx.close().catch(()=>{}),1700)}catch(e){}};
  function celebrate(){const profile=getProfile();if(!profile||!book)return;const p=paper('A story for the record! 📖','You finished '+book.title+'!');const companion=companions[profile.companion];p.append(portrait(profile.companion));let congrats=document.createElement('p');congrats.textContent=companion.name+' is so proud of you, '+profile.name+'!';p.append(congrats);const history=getHistory(),id=book.id;const today=new Date().toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});let record=document.createElement('div');record.className='z4-record';let heading=document.createElement('h3');heading.textContent='Library checkout card';record.append(heading);let table=document.createElement('table');let tr=document.createElement('tr');['Little reader','Date read'].forEach(v=>{let th=document.createElement('th');th.textContent=v;tr.append(th)});table.append(tr);history.filter(x=>x.bookId===id).slice(-6).forEach(x=>{let row=document.createElement('tr');[x.name,new Date(x.date).toLocaleDateString()].forEach(v=>{let td=document.createElement('td');td.textContent=v;row.append(td)});table.append(row)});record.append(table);p.append(record);let stamped=false;const stamp=document.createElement('div');stamp.className='z4-stamp';stamp.textContent='STORY COMPLETED';const save=button('Stamp my reading card ✨',()=>{if(stamped)return;stamped=true;history.push({id:crypto.randomUUID(),readerId:profile.id,name:profile.name,bookId:id,date:new Date().toISOString()});localStorage.setItem(HISTORY,JSON.stringify(history));const row=document.createElement('tr');[profile.name,today].forEach(v=>{const td=document.createElement('td');td.textContent=v;row.append(td)});table.append(row);p.insertBefore(stamp,p.lastElementChild);save.disabled=true;save.textContent='Reading recorded ✓';try{const a=animalAudio[profile.companion];a?.play().catch(()=>{})}catch(e){}spark(p,20)});p.append(save,button('Back to my story',hide,true));}
  // Run after the existing Next button handler, only on the final page.
- document.getElementById('next').addEventListener('click',()=>{if(book&&page===book.pages.length-1)setTimeout(celebrate,1050)});
+ // V5 owns the completion flow; no V4 completion listener.
+})();
+</script><style id="zara-v5-style">
+/* Independent transparent companion art, never a crop of the library scene. */
+.z4-avatar{background-image:none!important;background-color:#fff6e8!important;background-size:contain!important;background-position:center!important;border:2px solid #caa567!important;overflow:hidden;display:flex!important;align-items:center;justify-content:center}
+.z4-avatar img{display:block;width:100%;height:100%;object-fit:contain}
+.z4-card{overflow:hidden;isolation:isolate;padding:27px 16px 23px!important;background:radial-gradient(ellipse at 50% 20%,#fffdf2 0%,#f8e9c8 70%,#f3dcaa 100%)!important;border:7px double #bb9254!important}
+.z4-card>*{position:relative;z-index:2}
+.z5-floral{position:absolute!important;z-index:1!important;pointer-events:none;inset:0;background:radial-gradient(circle at 9% 93%,#a7bd8e80 0 4%,transparent 5%),radial-gradient(circle at 91% 9%,#c6b4db77 0 5%,transparent 6%)}
+.z5-flowers{position:absolute!important;z-index:1!important;pointer-events:none;color:#7c9165;font-size:clamp(20px,5vw,34px);opacity:.8;letter-spacing:5px}
+.z5-flowers.top{left:9px;top:7px}.z5-flowers.bottom{right:7px;bottom:9px;transform:rotate(180deg)}
+.z5-butterfly{position:absolute!important;z-index:3!important;right:9%;top:23%;font-size:27px;filter:sepia(.55) saturate(2.2) hue-rotate(340deg);animation:z5Butterfly 3s ease-in-out infinite alternate}
+@keyframes z5Butterfly{to{transform:translate(7px,-9px) rotate(12deg)}}
+.z4-card .z4-avatar{width:110px!important;height:110px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.z5-membership{font-size:12px;color:#8b6a45;letter-spacing:.08em}
+.z5-brass{position:absolute;left:58%;top:57%;width:11%;height:12%;z-index:19;border:1px solid #805b2b;border-radius:5px;background:linear-gradient(145deg,#f7df9a,#a8772e 45%,#e9c16d 60%,#7f5226);box-shadow:0 2px 6px #0005,0 0 7px #f9d980;cursor:pointer;display:grid;place-items:center;color:#543818;font-size:clamp(9px,1.6vw,19px);transform:rotate(-6deg)}
+.z5-brass:focus-visible{outline:3px solid #fff0b1}
+.z5-settings-card{display:block;width:100%;margin-top:12px;padding:9px;border:1px solid #a87c48;border-radius:10px;background:#fff7df;color:#553821;font:600 14px Georgia,serif;cursor:pointer}
+.z5-companion-reader{position:fixed;right:10px;bottom:10px;width:clamp(48px,8vw,76px);height:clamp(48px,8vw,76px);border:2px solid #d1a961;border-radius:50%;background:#fff6e8ed;z-index:25;box-shadow:0 3px 13px #593c2744;cursor:pointer;padding:2px}
+.z5-companion-reader img{width:100%;height:100%;object-fit:contain}
+.z5-companion-reader[hidden]{display:none!important}
+.z5-peek{position:fixed;z-index:100005;bottom:4%;right:5%;width:clamp(80px,16vw,150px);pointer-events:none;animation:z5Peek 2.2s ease-in-out both;filter:drop-shadow(0 3px 9px #fff5bd)}
+@keyframes z5Peek{0%{opacity:0;transform:translateY(90px) rotate(15deg)}25%,70%{opacity:1;transform:translateY(0) rotate(-5deg)}100%{opacity:0;transform:translateY(80px)}}
+.z5-celebrate{animation:z5Cheer 1.6s ease-in-out 2;max-width:115px;max-height:115px;object-fit:contain}
+@keyframes z5Cheer{0%,100%{transform:translateY(0) rotate(-5deg)}40%{transform:translateY(-14px) rotate(7deg)}}
+.z5-checkout-stamp{margin:10px auto 18px;display:block;width:max-content;max-width:90%;border:4px double #a3483d;border-radius:8px;color:#a3483d;padding:9px 14px;font:bold clamp(14px,3vw,21px) Georgia,serif;letter-spacing:.06em;transform:rotate(-8deg);animation:z5StampDown .85s .3s cubic-bezier(.18,1.4,.35,1) both}
+@keyframes z5StampDown{0%{opacity:0;transform:translateY(-150px) scale(2) rotate(-15deg)}60%{opacity:1;transform:translateY(5px) scale(.88) rotate(-8deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(-8deg)}}
+.z5-greeting{position:absolute;top:12%;left:26%;width:45%;text-align:center;color:#fff5d5;text-shadow:0 2px 9px #3b2a17,0 0 13px #ffe29a;font:bold clamp(11px,2.2vw,28px) Georgia,serif;z-index:13;pointer-events:none;animation:z5Greeting 3s ease both}
+@keyframes z5Greeting{0%,100%{opacity:0}15%,75%{opacity:1}}
+@media(prefers-reduced-motion:reduce){.z5-peek,.z5-celebrate,.z5-checkout-stamp,.z5-butterfly,.z5-greeting{animation:none!important}}
+</style><script id="zara-v5-script">
+(function(){
+'use strict';
+const KEY='zara-reader-v4',HISTORY='zara-readings-v4';
+const portraits={kit:'assets/kit-companion.PNG',sara:'assets/sara-companion.PNG',sam:'assets/sam-companion.PNG'};
+const roles={kit:'The Curious Explorer',sara:'The Gentle Helper',sam:'The Brave Adventurer'};
+const profile=()=>{try{return JSON.parse(localStorage.getItem(KEY))}catch{return null}};
+const historyRead=()=>{try{return JSON.parse(localStorage.getItem(HISTORY))||[]}catch{return []}};
+function sound(id){try{const a=animalAudio[id];if(a){a.pause();a.currentTime=0;a.play().catch(()=>{})}}catch(e){}}
+function spark(host,n=16){for(let i=0;i<n;i++){const x=document.createElement('span');x.className='z4-spark';x.textContent=i%2?'✦':'✧';x.style.left=(5+(i*43)%87)+'%';x.style.top=(15+(i*19)%70)+'%';x.style.animationDelay=(i%8*.11)+'s';host.appendChild(x);setTimeout(()=>x.remove(),2100)}}
+function decorateCard(){document.querySelectorAll('.z4-card').forEach(c=>{if(c.querySelector('.z5-floral'))return;let bg=document.createElement('div');bg.className='z5-floral';c.prepend(bg);for(const side of ['top','bottom']){let fl=document.createElement('span');fl.className='z5-flowers '+side;fl.textContent='❀ ❧ ✿';c.appendChild(fl)}let b=document.createElement('span');b.className='z5-butterfly';b.textContent='🦋';c.appendChild(b);let label=document.createElement('div');label.className='z5-membership';label.textContent='✧ Every book is a new adventure ✧';c.appendChild(label);spark(c,14)})}
+// Replace V4's cropped CSS portraits with original transparent watercolor PNGs.
+const oldLayer=document.querySelector('.z4-layer');
+const observer=new MutationObserver(()=>{document.querySelectorAll('.z4-avatar').forEach(el=>{const id=['kit','sara','sam'].find(x=>el.classList.contains(x));if(!id||el.querySelector('img'))return;const img=document.createElement('img');img.src=portraits[id];img.alt=id.charAt(0).toUpperCase()+id.slice(1)+' watercolor portrait';el.append(img)});decorateCard()});
+observer.observe(oldLayer,{subtree:true,childList:true});
+const room=document.getElementById('home');
+// V4 has an invisible card hotspot; make the holder visibly antique brass.
+const oldHolder=room.querySelector('.z4-reader-card');if(oldHolder){oldHolder.classList.add('z5-brass');oldHolder.innerHTML='<span aria-hidden="true">✉</span>';oldHolder.title='My Library Card';oldHolder.setAttribute('aria-label','Open or edit my library card')}
+// Always expose My Library Card in the existing lighting settings.
+document.querySelectorAll('.magic-panel').forEach(panel=>{if(panel.querySelector('.z5-settings-card'))return;const btn=document.createElement('button');btn.className='z5-settings-card';btn.textContent='✉ My Library Card';btn.onclick=()=>{panel.classList.add('hide');window.zaraShowLibraryCard?.()};panel.append(btn)});
+// Nonintrusive companion icon during reading.
+const reader=document.getElementById('reader');const icon=document.createElement('button');icon.className='z5-companion-reader';icon.hidden=true;icon.setAttribute('aria-label','Hear your reading companion');icon.onclick=()=>{const p=profile();if(p)sound(p.companion)};reader.append(icon);
+function updateIcon(){const p=profile();icon.hidden=!p;if(p){icon.replaceChildren();const img=document.createElement('img');img.src=portraits[p.companion]||portraits.sara;img.alt=p.companion+' companion';icon.append(img)}}
+function peek(){const p=profile();if(!p)return;const im=document.createElement('img');im.className='z5-peek';im.src=portraits[p.companion];im.alt='';document.body.append(im);setTimeout(()=>im.remove(),2400)}
+const origOpen=window.openBook;window.openBook=function(id){origOpen(id);updateIcon();peek()};
+// selectWithTransition calls lexical openBook, not window.openBook: also observe reader visibility.
+new MutationObserver(()=>{if(!reader.classList.contains('hide')){updateIcon();if(!reader.dataset.z5Peeked){reader.dataset.z5Peeked='yes';peek()}}else{delete reader.dataset.z5Peeked}}).observe(reader,{attributes:true,attributeFilter:['class']});
+const origCard=window.zaraShowLibraryCard;window.zaraShowLibraryCard=function(){origCard();setTimeout(decorateCard,0)};
+// Returning readers receive a greeting and their companion's welcome chirp/meow/squeak.
+let wasEntrance=true;new MutationObserver(()=>{const entered=!room.classList.contains('hide')&&reader.classList.contains('hide');if(entered&&wasEntrance){wasEntrance=false;const p=profile();if(p){const hello=document.createElement('div');hello.className='z5-greeting';hello.textContent='Welcome back, '+p.name+'! ✨';room.append(hello);setTimeout(()=>hello.remove(),3200);sound(p.companion)}}if(!entered&&document.getElementById('entrance').classList.contains('hide')===false)wasEntrance=true}).observe(room,{attributes:true,attributeFilter:['class']});
+// Correct completion: only when Next is clicked WHILE already on the final page.
+// Capture before the V4 handler runs; stop the old The End overlay from appearing behind the sheet.
+const next=document.getElementById('next');let completionOpen=false,recordedForVisit=false,sessionBook=null;
+function sheet(){if(!book||completionOpen)return;completionOpen=true;const b=book,p=profile(),layer=oldLayer;
+ if(!p){window.zaraShowLibraryCard?.();completionOpen=false;return}
+ layer.hidden=false;layer.replaceChildren();const paper=document.createElement('section');paper.className='z4-paper';layer.append(paper);
+ const title=document.createElement('h2');title.textContent='A Story for the Record! 📖';paper.append(title);
+ const intro=document.createElement('p');intro.textContent='You finished '+b.title+'!';paper.append(intro);
+ const img=document.createElement('img');img.className='z5-celebrate';img.src=portraits[p.companion];img.alt=p.companion+' celebrating';paper.append(img);
+ const message=document.createElement('p');message.textContent=p.companion.charAt(0).toUpperCase()+p.companion.slice(1)+' is so proud of you, '+p.name+'!';paper.append(message);
+ const record=document.createElement('div');record.className='z4-record';record.innerHTML='<h3>Library Checkout Card</h3>';const table=document.createElement('table');const head=document.createElement('tr');for(const t of ['Little reader','Date read']){const th=document.createElement('th');th.textContent=t;head.append(th)}table.append(head);
+ const h=historyRead();
+ if(!recordedForVisit||sessionBook!==b.id){h.push({id:crypto.randomUUID(),readerId:p.id,name:p.name,bookId:b.id,date:new Date().toISOString()});localStorage.setItem(HISTORY,JSON.stringify(h));recordedForVisit=true;sessionBook=b.id}
+ for(const entry of h.filter(x=>x.bookId===b.id).slice(-7)){const tr=document.createElement('tr');for(const v of [entry.name,new Date(entry.date).toLocaleDateString()]){const td=document.createElement('td');td.textContent=v;tr.append(td)}table.append(tr)}record.append(table);paper.append(record);
+ const stamp=document.createElement('div');stamp.className='z5-checkout-stamp';stamp.textContent='STORY COMPLETED';paper.append(stamp);spark(paper,22);
+ const actions=document.createElement('div');const backShelf=document.createElement('button');backShelf.className='z4-action';backShelf.textContent='‹ Back to Bookshelf';backShelf.onclick=()=>{layer.hidden=true;layer.replaceChildren();completionOpen=false;document.getElementById('back').click()};const backBook=document.createElement('button');backBook.className='z4-action secondary';backBook.textContent='Back to Book';backBook.onclick=()=>{layer.hidden=true;layer.replaceChildren();completionOpen=false};actions.append(backShelf,backBook);paper.append(actions);
+ setTimeout(()=>{sound(p.companion)},400);
+ }
+ // Disable the legacy end animation only on the finish action, while preserving it elsewhere.
+ next.addEventListener('click',e=>{if(!book)return;if(page===book.pages.length-1){e.stopImmediatePropagation();e.preventDefault();sheet()}},true);
+ // On a new book, allow one new reading record, including rereads after reopening the book.
+ document.querySelectorAll('[data-book]').forEach(el=>el.addEventListener('click',()=>{recordedForVisit=false;sessionBook=null},true));
+ const restart=document.getElementById('restart');restart.addEventListener('click',()=>{recordedForVisit=false;sessionBook=null});
+ // If the last page is reached, label the button as the explicit finish action.
+ const change=new MutationObserver(()=>{if(book&&page===book.pages.length-1&&next.textContent!=='Finish Story ✨')next.textContent='Finish Story ✨'});change.observe(document.getElementById('count'),{childList:true,characterData:true,subtree:true});
 })();
 </script></body></html>
