@@ -1,16 +1,89 @@
 {
   "books": [
-    {"id":"kit","title":"Kit and the Red Hat","pages":[
-      {"text":"Kit is a cat.","image":"assets/01-kit-is-a-cat.png"},
-      {"text":"Kit has a red hat.","image":"assets/02-kit-has-a-red-hat.png"},
-      {"text":"A big gust of wind hits the hat.","image":"assets/03-a-big-gust-of-wind.png"},
-      {"text":"The hat lands in the mud.","image":"assets/04-hat-lands-in-mud.png"},
-      {"text":"Kit is sad. The hat is wet.","image":"assets/05-kit-is-sad.png"},
-      {"text":"Sara can help get the hat.","image":"assets/06-pip-gets-the-hat.png"},
-      {"text":"The hat will dry in the sun.","image":"assets/07-hat-dries-in-sun.png"},
-      {"text":"Kit is glad for Sara’s help.","image":"assets/08-kit-thanks-pip.png"}
-    ]},
-    {"id":"sara","title":"Sara and the Big Egg","pages":[]},
-    {"id":"sam","title":"Sam’s Fun Trip","pages":[]}
+    {
+      "id": "kit",
+      "title": "Kit and the Red Hat",
+      "pages": [
+        {
+          "text": "Kit is a cat.",
+          "image": "assets/01-kit-is-a-cat.png"
+        },
+        {
+          "text": "Kit has a red hat.",
+          "image": "assets/02-kit-has-a-red-hat.png"
+        },
+        {
+          "text": "A big gust of wind hits the hat.",
+          "image": "assets/03-a-big-gust-of-wind.png"
+        },
+        {
+          "text": "The hat lands in the mud.",
+          "image": "assets/04-hat-lands-in-mud.png"
+        },
+        {
+          "text": "Kit is sad. The hat is wet.",
+          "image": "assets/05-kit-is-sad.png"
+        },
+        {
+          "text": "Sara can help get the hat.",
+          "image": "assets/06-pip-gets-the-hat.png"
+        },
+        {
+          "text": "The hat will dry in the sun.",
+          "image": "assets/07-hat-dries-in-sun.png"
+        },
+        {
+          "text": "Kit is glad for Sara’s help.",
+          "image": "assets/08-kit-thanks-pip.png"
+        }
+      ]
+    },
+    {
+      "id": "sara",
+      "title": "Sara and the Big Egg",
+      "pages": [
+        {
+          "text": "Sara finds a big egg. The egg is in the nest.",
+          "image": "assets/01-Sara-and-the-egg.PNG"
+        },
+        {
+          "text": "The wind tips the egg to the rim.",
+          "image": "assets/02-wind-blows-egg.PNG"
+        },
+        {
+          "text": "The egg drops into the grass!",
+          "image": "assets/03-egg-falls-in-grass.PNG"
+        },
+        {
+          "text": "Sara is sad. Her egg is lost!",
+          "image": "assets/04-sara-is-sad.PNG"
+        },
+        {
+          "text": "Kit spots the egg. “Sara, look!”",
+          "image": "assets/05-egg-is-found.PNG"
+        },
+        {
+          "text": "Kit and Sara get the egg. They bring it back.",
+          "image": "assets/06-bring-egg-back.PNG"
+        },
+        {
+          "text": "Sara’s nest is a mess. Kit and Sara fix it.",
+          "image": "assets/07-fix-the-best.PNG"
+        },
+        {
+          "text": "The egg is snug in the nest. Then... CRACK!",
+          "image": "assets/08-the-egg-cracks.PNG"
+        },
+        {
+          "text": "Out pops a little dino! “Hi, Bitsy!” says Sara.",
+          "image": "assets/09-out-comes-bitsy.PNG"
+        }
+      ]
+    },
+    {
+      "id": "sam",
+      "title": "Sam’s Fun Trip",
+      "pages": []
+    }
   ]
 }
