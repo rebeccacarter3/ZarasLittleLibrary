@@ -194,17 +194,17 @@
 .magic-hit:focus-visible{outline:3px solid #ffe0a0;outline-offset:2px;background:#fff5d525}
 #door-tap{left:38%;top:30%;width:23%;height:47%}
 #entrance .magic-backdrop{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 54%,#ffd36b00 8%,transparent 65%)}
-#entrance.entering{animation:doorApproach 2.3s cubic-bezier(.3,.04,.72,1) forwards;transform-origin:50% 57%}
+#entrance.entering{animation:doorApproach 2.65s cubic-bezier(.32,0,.16,1) forwards;transform-origin:50% 57%}
 #entrance .door-light{position:absolute;left:38.4%;top:30.7%;width:23%;height:47.5%;border-radius:48% 48% 5% 5% / 23% 23% 3% 3%;background:radial-gradient(ellipse at 60% 55%,#fffef0 0%,#ffe8a1 37%,#ffa637 95%);box-shadow:0 0 28px 9px #ffc75c;opacity:0;pointer-events:none;z-index:3}
 #entrance .door-leaf{position:absolute;left:38.4%;top:30.7%;width:23%;height:47.5%;border-radius:48% 48% 4% 4% / 23% 23% 2% 2%;overflow:hidden;transform-origin:5% 50%;z-index:4;pointer-events:none;opacity:0;box-shadow:inset -6px 0 15px #3c1b0d88;backface-visibility:hidden}
 #entrance .door-leaf img{position:absolute;width:434.8%;height:210.5%;max-width:none;left:-167%;top:-64.6%;object-fit:fill}
-#entrance.entering .door-light{animation:lightReveal 2.3s ease-in forwards}
-#entrance.entering .door-leaf{opacity:1;animation:doorSwing 1.55s cubic-bezier(.32,.06,.6,1) forwards}
+#entrance.entering .door-light{animation:lightReveal 2.65s ease-in-out forwards}
+#entrance.entering .door-leaf{opacity:1;animation:doorSwing 1.85s cubic-bezier(.25,.1,.22,1) forwards}
 @keyframes doorSwing{0%{transform:perspective(850px) rotateY(0deg)}100%{transform:perspective(850px) rotateY(-105deg)}}
 @keyframes lightReveal{0%{opacity:.12}28%{opacity:.8}65%{opacity:1;box-shadow:0 0 55px 30px #ffda80}100%{opacity:1;box-shadow:0 0 130px 75px #fff0b8}}
 
 #entrance.entering .magic-backdrop{animation:doorGlow 1.5s ease-in forwards}
-@keyframes doorApproach{0%,20%{transform:scale(1);opacity:1}58%{transform:scale(1.35);opacity:1}82%{transform:scale(2.2);opacity:1}100%{transform:scale(3.8);opacity:0}}
+@keyframes doorApproach{0%,12%{transform:scale(1);opacity:1}40%{transform:scale(1.14);opacity:1}65%{transform:scale(1.55);opacity:1}86%{transform:scale(2.5);opacity:1}100%{transform:scale(4.2);opacity:0}}
 @keyframes doorGlow{0%,25%{background:transparent}65%{background:#ffdc8512}100%{background:#fff2d5fa}}
 #home{aspect-ratio:16/9;overflow:hidden}
 #home>img{height:100%;object-fit:fill}
@@ -425,8 +425,93 @@ document.querySelectorAll('[data-book]').forEach(b=>b.addEventListener('click',(
  }
  updateTheme();setInterval(updateTheme,60000);
  let entering=false;
- document.getElementById('door-tap').onclick=()=>{if(entering)return;entering=true;const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;entrance.classList.add('entering');setTimeout(()=>{entrance.classList.add('hide');room.classList.remove('hide');entrance.classList.remove('entering');entering=false},reduced?50:2300)};
+ document.getElementById('door-tap').onclick=()=>{if(entering)return;entering=true;window.zaraBell?.();const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;entrance.classList.add('entering');setTimeout(()=>{entrance.classList.add('hide');room.classList.remove('hide');entrance.classList.remove('entering');entering=false},reduced?50:2650)};
  // Returning from a story goes to the library, not back through the door.
  // Refreshing the app starts at the enchanted entrance.
+})();
+</script>
+<style>
+/* Reverse book transition: close the open reader before revealing the library. */
+.zara-close-overlay{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;perspective:1300px;pointer-events:all;background:rgba(52,29,17,.15);animation:zaraCloseShade 1.32s ease forwards}
+.zara-close-spread{position:relative;width:min(85vw,880px);aspect-ratio:1.95;transform-style:preserve-3d;filter:drop-shadow(0 14px 22px #321b1480);animation:zaraCloseShrink 1.32s cubic-bezier(.35,.04,.55,1) forwards}
+.zara-close-half{position:absolute;top:0;width:50%;height:100%;background:linear-gradient(110deg,#e5c9a1,#fff4dc 15%,#fff9e9 80%,#e7d0aa);border:9px solid #805033;box-sizing:border-box;box-shadow:inset 0 0 24px #ad865755}
+.zara-close-left{left:0;border-radius:12px 2px 2px 12px;border-right:0}
+.zara-close-right{right:0;border-radius:2px 12px 12px 2px;border-left:0}
+.zara-close-left:after,.zara-close-right:after{content:'❧';position:absolute;top:12%;left:20%;font-size:clamp(28px,5vw,60px);color:#b6a17b;opacity:.55}
+.zara-close-leaf{position:absolute;top:0;left:50%;width:50%;height:100%;background:linear-gradient(90deg,#fff6e1,#f0d7b1);border:7px solid #95643e;box-sizing:border-box;border-radius:2px 12px 12px 2px;transform-origin:left center;backface-visibility:visible;animation:zaraCloseLeaf .75s ease-in forwards}
+.zara-close-cover{position:absolute;top:0;left:50%;width:50%;height:100%;background:linear-gradient(130deg,#ba7655,#77482e 58%,#a46d4b);border:9px double #e9cb8e;border-radius:3px 14px 14px 3px;box-sizing:border-box;transform-origin:left center;animation:zaraCloseCover .9s .26s cubic-bezier(.4,0,.2,1) forwards;box-shadow:inset 0 0 0 10px #8e5c3e,0 0 14px #5a382e66}
+.zara-close-cover:after{content:'✦';position:absolute;top:43%;left:43%;color:#f5d995;font-size:clamp(20px,5vw,54px)}
+@keyframes zaraCloseLeaf{0%{transform:rotateY(0)}100%{transform:rotateY(-180deg)}}
+@keyframes zaraCloseCover{0%{transform:rotateY(0)}100%{transform:rotateY(-180deg)}}
+@keyframes zaraCloseShrink{0%,53%{transform:scale(1)}100%{transform:translate(27vw,-15vh) scale(.12) rotate(-8deg);opacity:.05}}
+@keyframes zaraCloseShade{0%,65%{background:rgba(52,29,17,.12)}100%{background:transparent}}
+@media(prefers-reduced-motion:reduce){.zara-close-overlay,.zara-close-spread,.zara-close-leaf,.zara-close-cover{animation:none!important}}
+</style>
+<script>
+(function(){
+ const back=document.getElementById('back');
+ if(!back)return;
+ const oldBack=back.onclick;
+ let closing=false;
+ back.onclick=function(){
+  if(closing)return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){oldBack?.call(back);return}
+  closing=true;
+  const overlay=document.createElement('div');overlay.className='zara-close-overlay';overlay.setAttribute('aria-hidden','true');
+  overlay.innerHTML='<div class="zara-close-spread"><div class="zara-close-half zara-close-left"></div><div class="zara-close-half zara-close-right"></div><div class="zara-close-leaf"></div><div class="zara-close-cover"></div></div>';
+  document.body.appendChild(overlay);
+  // Reveal the library under the closing book, then remove the transition.
+  setTimeout(()=>oldBack?.call(back),790);
+  setTimeout(()=>{overlay.remove();closing=false},1370);
+ };
+})();
+</script>
+<style>
+/* V4: welcome card, companion selection and library book checkout record */
+.z4-layer{position:fixed;inset:0;z-index:100010;display:grid;place-items:center;padding:16px;background:rgba(32,19,19,.54);backdrop-filter:blur(5px);overflow:auto}
+.z4-layer[hidden]{display:none!important}
+.z4-paper{position:relative;width:min(92vw,590px);max-height:93dvh;overflow:auto;box-sizing:border-box;background:linear-gradient(145deg,#fffaf0,#f7e7c9);border:5px double #c49c62;border-radius:18px;padding:clamp(16px,3vw,30px);color:#553b2d;box-shadow:0 0 48px #ffda80a3,0 18px 60px #0007;text-align:center;font-family:Georgia,serif;animation:z4Rise .95s cubic-bezier(.2,.7,.2,1) both}
+.z4-paper h2{font-size:clamp(21px,3.5vw,31px);margin:8px 0}.z4-paper p{margin:7px 0 16px}.z4-paper label{display:block;text-align:left;font-size:14px;margin:14px 0 6px}.z4-paper input{width:100%;box-sizing:border-box;border:1px solid #bd996d;border-radius:10px;padding:12px;font-size:18px;background:#fffdf7;color:#4c3325}
+.z4-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:14px 0}
+.z4-choice{font-family:Georgia,serif;border:2px solid #e4cda8;border-radius:12px;background:#fff8e9;padding:9px 4px;color:#53372c;cursor:pointer;min-width:0}
+.z4-choice[aria-pressed=true]{border-color:#a97a31;background:#ffebbf;box-shadow:0 0 15px #eac06499}
+.z4-choice strong{display:block;font-size:15px}.z4-choice small{display:block;font-size:11px;margin-top:4px;line-height:1.2}
+.z4-avatar{display:block;margin:0 auto 5px;width:clamp(48px,9vw,82px);height:clamp(48px,9vw,82px);border-radius:50%;border:3px solid #d3b176;background-image:url('assets/library-day.PNG');background-repeat:no-repeat;background-size:750% auto;background-color:#eed9bd;box-shadow:0 3px 10px #5739233d}
+.z4-avatar.kit{background-position:36% 63%}.z4-avatar.sara{background-position:5% 90%}.z4-avatar.sam{background-position:94% 48%}
+.z4-action{border:1px solid #a77c43;border-radius:22px;padding:11px 18px;background:linear-gradient(#ffefc4,#dfb878);color:#4f321e;font:bold 16px Georgia,serif;cursor:pointer;box-shadow:0 3px 9px #a47a4c77;margin:8px 4px}
+.z4-action.secondary{background:#fff8e9}.z4-card{position:relative;margin:12px auto;padding:24px 14px;max-width:430px;border:7px double #caa96e;border-radius:13px;background:radial-gradient(circle at 50% 20%,#fff9e9,#f5e0b5);box-shadow:0 0 27px #f8d47b;animation:z4Rise .8s ease both}
+.z4-card .z4-avatar{width:90px;height:90px}.z4-card .z4-name{font-size:clamp(24px,5vw,38px);font-weight:bold;overflow-wrap:anywhere}.z4-kicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#8b633c}.z4-spark{position:absolute;color:#ffcf5b;pointer-events:none;text-shadow:0 0 8px #fff;animation:z4Glitter 1.6s ease-out both}
+@keyframes z4Rise{from{opacity:0;transform:translateY(65px) scale(.74)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes z4Glitter{0%{opacity:0;transform:translateY(25px) scale(.3)}30%{opacity:1}100%{opacity:0;transform:translateY(-75px) scale(1.5)}}
+.z4-record{border:2px solid #c6a37a;padding:15px;background:repeating-linear-gradient(#fff9e9 0 30px,#d7c6a5 31px,#fff9e9 32px);margin:15px 0;text-align:left}
+.z4-record table{width:100%;border-collapse:collapse;font-size:13px}.z4-record th,.z4-record td{padding:7px;border-bottom:1px solid #bca682;text-align:left}
+.z4-stamp{display:inline-block;color:#a34e41;border:4px double #a34e41;border-radius:8px;padding:8px 13px;transform:rotate(-10deg);font:bold 18px Georgia,serif;animation:z4Stamp .65s cubic-bezier(.18,1.8,.45,1) both}
+@keyframes z4Stamp{from{opacity:0;transform:scale(3.5) rotate(-22deg)}to{opacity:1;transform:scale(1) rotate(-10deg)}}
+.z4-reader-card{position:absolute;left:59%;top:58%;width:10%;height:13%;border:0;background:transparent;z-index:10;cursor:pointer}
+.z4-reader-card:focus-visible{outline:3px solid #ffd166}
+@media(prefers-reduced-motion:reduce){.z4-paper,.z4-card,.z4-spark,.z4-stamp{animation:none!important}}
+</style><script>
+/* V4 uses private, on-device records until the Cloudflare Worker D1 API is secured and connected. */
+(function(){
+ const KEY='zara-reader-v4',HISTORY='zara-readings-v4';
+ const companions={kit:{name:'Kit',role:'The Curious Explorer',sound:'kit'},sara:{name:'Sara',role:'The Gentle Helper',sound:'sara'},sam:{name:'Sam',role:'The Brave Adventurer',sound:'sam'}};
+ const getProfile=()=>{try{return JSON.parse(localStorage.getItem(KEY))}catch{return null}};
+ const getHistory=()=>{try{return JSON.parse(localStorage.getItem(HISTORY))||[]}catch{return []}};
+ const layer=document.createElement('div');layer.className='z4-layer';layer.hidden=true;layer.setAttribute('role','dialog');layer.setAttribute('aria-modal','true');layer.setAttribute('aria-label','Magical library card');document.body.appendChild(layer);
+ function hide(){layer.hidden=true;layer.replaceChildren()}
+ function spark(container,n=32){for(let i=0;i<n;i++){let s=document.createElement('span');s.className='z4-spark';s.textContent=i%3?'✦':'✧';s.style.left=(4+(i*37)%91)+'%';s.style.top=(30+(i*17)%66)+'%';s.style.animationDelay=(i%9*.11)+'s';container.appendChild(s)}}
+ function portrait(id){let span=document.createElement('span');span.className='z4-avatar '+id;span.setAttribute('aria-label',companions[id].name);return span}
+ function paper(title,description){layer.hidden=false;layer.innerHTML='';let p=document.createElement('section');p.className='z4-paper';let h=document.createElement('h2');h.textContent=title;p.append(h);if(description){let d=document.createElement('p');d.textContent=description;p.append(d)}layer.append(p);return p}
+ function button(text,fn,secondary=false){let b=document.createElement('button');b.className='z4-action'+(secondary?' secondary':'');b.textContent=text;b.onclick=fn;return b}
+ function card(){const profile=getProfile();if(!profile)return form();const p=paper('Your Magical Library Card','A little card for a world of big adventures!');const c=document.createElement('div');c.className='z4-card';c.innerHTML='<div class="z4-kicker">Zara’s Little Library · Official Little Reader</div>';c.append(portrait(profile.companion));let n=document.createElement('div');n.className='z4-name';n.textContent=profile.name;c.append(n);let role=document.createElement('p');role.textContent=companions[profile.companion].name+' · '+companions[profile.companion].role;c.append(role);let issued=document.createElement('div');issued.className='z4-kicker';issued.textContent='Library member since '+new Date(profile.issued).toLocaleDateString();c.append(issued);p.append(c);spark(c,28);p.append(button('Explore the library ✨',hide),button('Change my card',form,true));}
+ function form(){const prior=getProfile();let choice=prior?.companion||'sara';const p=paper('Welcome, little reader!','The enchanted library has a special card just for you.');const label=document.createElement('label');label.textContent='What should we call you?';label.htmlFor='z4-name';const input=document.createElement('input');input.id='z4-name';input.maxLength=32;input.autocomplete='off';input.placeholder='Your first name or nickname';input.value=prior?.name||'';p.append(label,input);const prompt=document.createElement('p');prompt.textContent='Choose your storybook companion:';p.append(prompt);const choices=document.createElement('div');choices.className='z4-choices';for(const [id,c] of Object.entries(companions)){const b=document.createElement('button');b.className='z4-choice';b.setAttribute('aria-pressed',String(choice===id));b.append(portrait(id));let strong=document.createElement('strong');strong.textContent=c.name;let small=document.createElement('small');small.textContent=c.role;b.append(strong,small);b.onclick=()=>{choice=id;choices.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))};choices.append(b)}p.append(choices);p.append(button('Get my library card ✨',()=>{const name=input.value.trim().replace(/\s+/g,' ');if(!name){input.focus();return}localStorage.setItem(KEY,JSON.stringify({id:prior?.id||crypto.randomUUID(),name,companion:choice,issued:prior?.issued||new Date().toISOString()}));card()}));if(prior)p.append(button('Not now',hide,true));spark(p,26)}
+ window.zaraShowLibraryCard=()=>getProfile()?card():form();
+ const room=document.getElementById('home');const holder=document.createElement('button');holder.className='z4-reader-card';holder.setAttribute('aria-label','Open your magical library card');holder.title='My library card';holder.onclick=window.zaraShowLibraryCard;room.append(holder);
+ const door=document.getElementById('door-tap');door.addEventListener('click',()=>{if(!getProfile())setTimeout(()=>{if(!document.getElementById('home').classList.contains('hide'))form()},2950) });
+ // Short vintage brass bell synthesized locally: no audio asset or network request needed.
+ window.zaraBell=()=>{try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return;const ctx=new A();ctx.resume();const t=ctx.currentTime;[0,.18].forEach((offset,i)=>{[1,2.01,3.92,5.44].forEach((partial,k)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=(i?1190:1320)*partial;g.gain.setValueAtTime(.0001,t+offset);g.gain.exponentialRampToValueAtTime(.034/(k+1),t+offset+.009);g.gain.exponentialRampToValueAtTime(.0001,t+offset+.95);o.connect(g);g.connect(ctx.destination);o.start(t+offset);o.stop(t+offset+.98)})});setTimeout(()=>ctx.close().catch(()=>{}),1700)}catch(e){}};
+ function celebrate(){const profile=getProfile();if(!profile||!book)return;const p=paper('A story for the record! 📖','You finished '+book.title+'!');const companion=companions[profile.companion];p.append(portrait(profile.companion));let congrats=document.createElement('p');congrats.textContent=companion.name+' is so proud of you, '+profile.name+'!';p.append(congrats);const history=getHistory(),id=book.id;const today=new Date().toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});let record=document.createElement('div');record.className='z4-record';let heading=document.createElement('h3');heading.textContent='Library checkout card';record.append(heading);let table=document.createElement('table');let tr=document.createElement('tr');['Little reader','Date read'].forEach(v=>{let th=document.createElement('th');th.textContent=v;tr.append(th)});table.append(tr);history.filter(x=>x.bookId===id).slice(-6).forEach(x=>{let row=document.createElement('tr');[x.name,new Date(x.date).toLocaleDateString()].forEach(v=>{let td=document.createElement('td');td.textContent=v;row.append(td)});table.append(row)});record.append(table);p.append(record);let stamped=false;const stamp=document.createElement('div');stamp.className='z4-stamp';stamp.textContent='STORY COMPLETED';const save=button('Stamp my reading card ✨',()=>{if(stamped)return;stamped=true;history.push({id:crypto.randomUUID(),readerId:profile.id,name:profile.name,bookId:id,date:new Date().toISOString()});localStorage.setItem(HISTORY,JSON.stringify(history));const row=document.createElement('tr');[profile.name,today].forEach(v=>{const td=document.createElement('td');td.textContent=v;row.append(td)});table.append(row);p.insertBefore(stamp,p.lastElementChild);save.disabled=true;save.textContent='Reading recorded ✓';try{const a=animalAudio[profile.companion];a?.play().catch(()=>{})}catch(e){}spark(p,20)});p.append(save,button('Back to my story',hide,true));}
+ // Run after the existing Next button handler, only on the final page.
+ document.getElementById('next').addEventListener('click',()=>{if(book&&page===book.pages.length-1)setTimeout(celebrate,1050)});
 })();
 </script></body></html>
