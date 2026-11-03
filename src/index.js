@@ -118,7 +118,22 @@ export default {
     if (/^\/invite\/[A-Za-z0-9_-]+\/?$/.test(path)) {
       const homepage = new URL('/', url);
       const assetRequest = new Request(homepage, request);
-      return responseWithReferrerPolicy(await env.ASSETS.fetch(assetRequest));
+      const response = await env.ASSETS.fetch(assetRequest);
+      if (!response.ok) return responseWithReferrerPolicy(response);
+      // iOS discovers the manifest while parsing HTML, before client-side JS
+      // can change its href. Serve a family-specific manifest in initial markup.
+      const inviteCode = path.match(/^\/invite\/([A-Za-z0-9_-]+)/)[1];
+      const html = await response.text();
+      const manifestHref = '/api/families/' + encodeURIComponent(inviteCode) + '/manifest.webmanifest';
+      const customized = html.replace(/<link\s+rel="manifest"\s+href="[^"]*"\s*\/?\s*>/i,
+        '<link rel="manifest" href="' + manifestHref + '">');
+      const headers = new Headers(response.headers);
+      headers.set('Content-Type', 'text/html; charset=utf-8');
+      headers.set('Cache-Control', 'no-store');
+      headers.set('Referrer-Policy', 'no-referrer');
+      headers.delete('Content-Length');
+      headers.delete('ETag');
+      return new Response(customized, {status:response.status,headers});
     }
     return env.ASSETS.fetch(request);
   }
