@@ -77,7 +77,9 @@ export default {
           if (!belongs) return error('Reader not found', 404);
           const id = uuid(body.readingId) ? body.readingId : crypto.randomUUID();
           // Existing Books rows must contain the BookID if ReadingHistory has a foreign key.
-          await env.DB.prepare('INSERT OR IGNORE INTO ReadingHistory (ReadingID, ReaderID, BookID, CompletedAt) VALUES (?, ?, ?, ?)').bind(id, body.readerId, body.bookId, iso()).run();
+          await env.DB.prepare('INSERT OR IGNORE INTO Books (BookID, Title, IsActive) VALUES (?, ?, 1)').bind(body.bookId, ({kit:'Kit and the Red Hat',sara:'Sara and the Big Egg',sam:'Sam’s Fun Trip'})[body.bookId] || body.bookId).run();
+          const completedAt = typeof body.completedAt === 'string' && !Number.isNaN(Date.parse(body.completedAt)) ? new Date(body.completedAt).toISOString() : iso();
+          await env.DB.prepare('INSERT OR IGNORE INTO ReadingHistory (ReadingID, ReaderID, BookID, CompletedAt) VALUES (?, ?, ?, ?)').bind(id, body.readerId, body.bookId, completedAt).run();
           return json({ readingId: id }, 201);
         }
         return error('Method not allowed', 405);
