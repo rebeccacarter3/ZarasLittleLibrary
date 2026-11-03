@@ -297,11 +297,46 @@ window.ZaraFamily=(()=>{
  const current=()=>get(PROFILE,null);
  function storeProfile(r){const p={id:r.ReaderID,name:r.DisplayName,companion:r.CompanionID,issued:r.CreatedAt};localStorage.setItem(PROFILE,JSON.stringify(p));localStorage.setItem('zara-family-active-'+code,r.ReaderID);return p}
  function selected(){const id=localStorage.getItem('zara-family-active-'+code);return readers.find(r=>r.ReaderID===id)||null}
- async function refresh(){const [r,h]=await Promise.all([api('/readers'),api('/history')]);readers=r.readers||[];family=r.family;const entries=(h.history||[]).map(x=>({id:x.ReadingID,readerId:x.ReaderID,name:readers.find(r=>r.ReaderID===x.ReaderID)?.DisplayName||'',bookId:x.BookID,date:x.CompletedAt}));const pending=get('zara-family-pending-'+code,[]);const merged=new Map([...entries,...pending].map(x=>[x.id,x]));localStorage.setItem(HISTORY,JSON.stringify([...merged.values()].sort((a,b)=>a.date.localeCompare(b.date))));const p=selected();if(p)storeProfile(p);else localStorage.removeItem(PROFILE);return readers}
- async function init(){if(!code)return;try{await refresh();ready=true;await flush();}catch(e){console.warn('Family library is temporarily unavailable',e)}}
+ async function refresh(){
+  const previous=get(HISTORY,[]);
+  const [r,h]=await Promise.all([api('/readers'),api('/history')]);
+  readers=r.readers||[];family=r.family;
+  const entries=(h.history||[]).map(x=>({id:x.ReadingID,readerId:x.ReaderID,name:readers.find(r=>r.ReaderID===x.ReaderID)?.DisplayName||'',bookId:x.BookID,date:x.CompletedAt}));
+  const key='zara-family-pending-'+code;
+  const pending=get(key,[]);
+  const ids=new Set(entries.map(x=>x.id));
+  const familyIds=new Set(readers.map(x=>x.ReaderID));
+  // Preserve and queue old local readings for readers that belong to this family.
+  const recover=previous.filter(x=>x&&x.id&&familyIds.has(x.readerId)&&!ids.has(x.id));
+  const queue=new Map([...pending,...recover].filter(x=>x&&x.id&&familyIds.has(x.readerId)).map(x=>[x.id,x]));
+  localStorage.setItem(key,JSON.stringify([...queue.values()]));
+  const merged=new Map([...entries,...queue.values()].map(x=>[x.id,x]));
+  localStorage.setItem(HISTORY,JSON.stringify([...merged.values()].sort((a,b)=>String(a.date).localeCompare(String(b.date)))));
+  const p=selected();if(p)storeProfile(p);else localStorage.removeItem(PROFILE);
+  return readers;
+ }
+ async function init(){if(!code)return;try{await refresh();ready=true;await flush();if(!get('zara-family-pending-'+code,[]).length)await refresh();}catch(e){console.warn('Family library is temporarily unavailable',e)}}
  async function saveProfile(p,wasEditing){if(!code)return;const data={readerId:p.id,displayName:p.name,companionId:p.companion};const result=await api('/readers',wasEditing?'PATCH':'POST',data);if(wasEditing){await refresh();return}readers.push(result.reader);storeProfile(result.reader);}
  async function saveReading(entry){if(!code)return;const key='zara-family-pending-'+code;let pending=get(key,[]);if(!pending.some(x=>x.id===entry.id))pending.push(entry);localStorage.setItem(key,JSON.stringify(pending));await flush()}
- async function flush(){if(!code)return;const key='zara-family-pending-'+code;const pending=get(key,[]);const unsent=[];for(const x of pending){try{await api('/history','POST',{readingId:x.id,readerId:x.readerId,bookId:x.bookId,completedAt:x.date})}catch(e){unsent.push(x);console.warn('Reading will sync later',e)}}localStorage.setItem(key,JSON.stringify(unsent))}
+ let flushing=null;
+ async function flush(){
+  if(!code)return;
+  if(flushing)return flushing;
+  flushing=(async()=>{
+   const key='zara-family-pending-'+code;
+   const pending=get(key,[]),unsent=[];
+   for(const x of pending){
+    try{await api('/history','POST',{readingId:x.id,readerId:x.readerId,bookId:x.bookId,completedAt:x.date})}
+    catch(e){unsent.push(x);console.warn('Reading will sync later',e)}
+   }
+   // Preserve entries added while this batch was in flight.
+   const current=get(key,[]);
+   const attempted=new Set(pending.map(x=>x.id));
+   const merged=new Map([...unsent,...current.filter(x=>!attempted.has(x.id))].map(x=>[x.id,x]));
+   localStorage.setItem(key,JSON.stringify([...merged.values()]));
+  })();
+  try{await flushing}finally{flushing=null}
+ }
  function choose(){const layer=document.querySelector('.z4-layer');if(!layer||!code||!ready)return false;layer.hidden=false;layer.replaceChildren();const panel=document.createElement('section');panel.className='z4-paper';const title=document.createElement('h2');title.textContent='Whose adventure is beginning?';panel.append(title);const subtitle=document.createElement('p');subtitle.textContent='Choose a library card for '+(family?.FamilyName||'your family')+'.';panel.append(subtitle);const grid=document.createElement('div');grid.className='zf-choice-list';for(const r of readers){const b=document.createElement('button');b.className='zf-choice';const img=document.createElement('img');img.src=portraits[r.CompanionID]||portraits.sara;img.alt='';const name=document.createElement('strong');name.textContent=r.DisplayName;b.append(img,name);b.onclick=()=>{storeProfile(r);window.zaraShowLibraryCard?.()};grid.append(b)}panel.append(grid);const add=document.createElement('button');add.className='z4-action';add.textContent='＋ Create a library card';add.onclick=()=>{localStorage.removeItem(PROFILE);window.zaraShowLibraryCard?.()};panel.append(add);const close=document.createElement('button');close.className='z4-action secondary';close.textContent='Explore the library';close.onclick=()=>{layer.hidden=true;layer.replaceChildren()};panel.append(close);layer.append(panel);return true}
  function open(){if(code&&ready&&readers.length>1)return choose();window.zaraShowLibraryCard?.();return true}
  document.addEventListener('DOMContentLoaded',()=>{init().then(()=>{if(ready&&readers.length>1&&!selected())choose();});document.addEventListener('visibilitychange',()=>{if(!document.hidden)flush()})});
