@@ -33,6 +33,30 @@ export default {
       try { await env.DB.prepare('SELECT 1 AS ok').first(); return json({ status: 'ok', database: 'connected' }); }
       catch (_) { return json({ status: 'unavailable', database: 'not connected' }, 503); }
     }
+    // Per-family install manifest. Its start_url restores the family even when
+    // the installed iOS web app has storage isolated from Safari.
+    const installMatch = path.match(/^\/api\/families\/([A-Za-z0-9_-]+)\/manifest\.webmanifest$/);
+    if (installMatch) {
+      if (request.method !== 'GET') return error('Method not allowed', 405);
+      const code = installMatch[1];
+      try {
+        const f = await family(env, code);
+        if (!f) return error('Invitation not found', 404);
+        const manifest = {
+          name: 'Zara’s Little Library', short_name: 'Zara’s Library',
+          id: '/invite/' + code,
+          start_url: '/invite/' + code,
+          scope: '/', display: 'standalone',
+          background_color: '#805436', theme_color: '#885c3b',
+          icons: [{src:'/assets/icon.png',sizes:'any',type:'image/png',purpose:'any'}]
+        };
+        return new Response(JSON.stringify(manifest), {status:200,headers:{
+          'Content-Type':'application/manifest+json; charset=utf-8',
+          'Cache-Control':'no-store', 'Referrer-Policy':'no-referrer',
+          'X-Content-Type-Options':'nosniff'
+        }});
+      } catch (e) {console.error('Install manifest error',e);return error('Manifest unavailable',500);}
+    }
     // Family data is accessible only by presenting that family's private invitation code.
     const match = path.match(/^\/api\/families\/([A-Za-z0-9_-]+)(?:\/(readers|history))?\/?$/);
     if (match) {
