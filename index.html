@@ -194,7 +194,7 @@
 .magic-hit:focus-visible{outline:3px solid #ffe0a0;outline-offset:2px;background:#fff5d525}
 #door-tap{left:38%;top:30%;width:23%;height:47%}
 #entrance .magic-backdrop{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 54%,#ffd36b00 8%,transparent 65%)}
-#entrance.entering{animation:doorApproach 2.65s cubic-bezier(.32,0,.16,1) forwards;transform-origin:50% 57%}
+#entrance.entering{animation:doorApproach 2.65s cubic-bezier(.42,0,.22,1) forwards;transform-origin:50% 57%;will-change:transform;backface-visibility:hidden}
 #entrance .door-light{position:absolute;left:38.4%;top:30.7%;width:23%;height:47.5%;border-radius:48% 48% 5% 5% / 23% 23% 3% 3%;background:radial-gradient(ellipse at 60% 55%,#fffef0 0%,#ffe8a1 37%,#ffa637 95%);box-shadow:0 0 28px 9px #ffc75c;opacity:0;pointer-events:none;z-index:3}
 #entrance .door-leaf{position:absolute;left:38.4%;top:30.7%;width:23%;height:47.5%;border-radius:48% 48% 4% 4% / 23% 23% 2% 2%;overflow:hidden;transform-origin:5% 50%;z-index:4;pointer-events:none;opacity:0;box-shadow:inset -6px 0 15px #3c1b0d88;backface-visibility:hidden}
 #entrance .door-leaf img{position:absolute;width:434.8%;height:210.5%;max-width:none;left:-167%;top:-64.6%;object-fit:fill}
@@ -204,7 +204,7 @@
 @keyframes lightReveal{0%{opacity:.12}28%{opacity:.8}65%{opacity:1;box-shadow:0 0 55px 30px #ffda80}100%{opacity:1;box-shadow:0 0 130px 75px #fff0b8}}
 
 #entrance.entering .magic-backdrop{animation:doorGlow 1.5s ease-in forwards}
-@keyframes doorApproach{0%,12%{transform:scale(1);opacity:1}40%{transform:scale(1.14);opacity:1}65%{transform:scale(1.55);opacity:1}86%{transform:scale(2.5);opacity:1}100%{transform:scale(4.2);opacity:0}}
+@keyframes doorApproach{0%,10%{transform:translate3d(0,0,0) scale(1);opacity:1}88%{transform:translate3d(0,0,0) scale(3.85);opacity:1}100%{transform:translate3d(0,0,0) scale(4.2);opacity:0}}
 @keyframes doorGlow{0%,25%{background:transparent}65%{background:#ffdc8512}100%{background:#fff2d5fa}}
 #home{aspect-ratio:16/9;overflow:hidden}
 #home>img{height:100%;object-fit:fill}
@@ -374,7 +374,7 @@ window.ZaraFamily=(()=>{
   .z4-card > p{font-size:clamp(9px,2.5vw,13px)!important}
   .z4-card > .z4-kicker:not(.z6-hide-kicker){font-size:clamp(7px,2vw,10px)!important}
 }
-<style id="zara-responsive-device-fit">
+/* zara-responsive-device-fit */
 /* Responsive scenes: use every available horizontal pixel, preserving artwork proportions. */
 html,body{width:100%;max-width:100%;overflow-x:clip}
 #entrance.magic-scene,#home.home{width:100%;max-width:none;margin-inline:0;aspect-ratio:16 / 9}
@@ -405,7 +405,41 @@ html,body{width:100%;max-width:100%;overflow-x:clip}
 @supports(padding:max(0px)){
  .z4-paper{padding-bottom:max(16px,env(safe-area-inset-bottom))}
 }
-</style></style></head><body><section id="entrance" class="magic-scene" aria-label="Enchanted fairy door"><img id="door-art" src="assets/fairy-door-day.PNG" alt="Fairy door leading to Zara’s Little Library"><div class="magic-backdrop"></div><div class="door-light"></div><div class="door-leaf"><img id="door-leaf-art" src="assets/fairy-door-day.PNG" alt=""></div><button id="door-tap" class="magic-hit" aria-label="Open the fairy door and enter the library"></button></section><main id="home" class="home hide magic-scene"><img src="assets/library-day.PNG" alt="Cozy enchanted library with books, reading chair, and woodland friends"><button class="hotspot one" aria-label="Open Kit and the Red Hat" data-book="kit"></button><button class="hotspot two" aria-label="Open Sara and the Big Egg" data-book="sara"></button><button class="hotspot three" aria-label="Open Sam’s Fun Trip" data-book="sam"></button><svg class="flying-butterfly" id="flying-butterfly" viewBox="0 0 100 100" aria-hidden="true"><g class="wing-left"><path d="M49 52C18 6 3 16 9 43c-9 16 11 33 40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><path d="M43 48C21 18 15 26 21 43" fill="none" stroke="#9b6c45" stroke-width="3"/><circle cx="16" cy="37" r="4" fill="#fff3d5"/></g><g class="wing-right"><path d="M51 52C82 6 97 16 91 43c9 16-11 33-40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><path d="M57 48C79 18 85 26 79 43" fill="none" stroke="#9b6c45" stroke-width="3"/><circle cx="84" cy="37" r="4" fill="#fff3d5"/></g><path d="M50 37v28" stroke="#4d352a" stroke-width="5" stroke-linecap="round"/><path d="M49 39Q38 20 34 25M51 39Q62 20 66 25" stroke="#4d352a" stroke-width="2" fill="none"/></svg><button type="button" class="butterfly-tap" id="butterfly-tap" aria-label="Make the welcome butterfly flutter" title="Tap the butterfly"></button><svg class="flying-butterfly right-flight" id="flying-butterfly-right" viewBox="0 0 100 100" aria-hidden="true"><g class="wing-left"><path d="M49 52C18 6 3 16 9 43c-9 16 11 33 40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><circle cx="16" cy="37" r="4" fill="#fff3d5"/></g><g class="wing-right"><path d="M51 52C82 6 97 16 91 43c9 16-11 33-40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><circle cx="84" cy="37" r="4" fill="#fff3d5"/></g><path d="M50 37v28" stroke="#4d352a" stroke-width="5" stroke-linecap="round"/><path d="M49 39Q38 20 34 25M51 39Q62 20 66 25" stroke="#4d352a" stroke-width="2" fill="none"/></svg><button type="button" class="butterfly-tap-right" id="butterfly-tap-right" aria-label="Make the butterfly on the right page flutter" title="Tap the butterfly"></button><span class="propeller-spin" id="propeller-spin" aria-hidden="true"><svg viewBox="0 0 100 100"><ellipse cx="50" cy="26" rx="10" ry="24" fill="#f6e3bd" stroke="#b89c72" stroke-width="2"/><ellipse cx="50" cy="74" rx="10" ry="24" fill="#f6e3bd" stroke="#b89c72" stroke-width="2"/><circle cx="50" cy="50" r="9" fill="#b28c60"/></svg></span><button type="button" class="propeller-tap" id="propeller-tap" aria-label="Spin Sam's airplane propeller" title="Tap anywhere on the plane to spin the propeller"></button><button type="button" class="animal-sound-tap kit" data-animal-sound="kit" aria-label="Hear Kit meow" title="Tap Kit to hear her"></button><button type="button" class="animal-sound-tap sara" data-animal-sound="sara" aria-label="Hear Sara chirp" title="Tap Sara to hear her"></button><button type="button" class="animal-sound-tap sam" data-animal-sound="sam" aria-label="Hear Sam squeak" title="Tap Sam to hear him"></button><svg class="flower-sprigs" id="flower-sprigs" viewBox="0 0 440 140" preserveAspectRatio="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+
+/* Immersive responsive stage: fill letterbox with matching softly blurred artwork.
+   Keep 16:9 scene geometry intact so door, book and character hit areas stay aligned. */
+body:has(#entrance:not(.hide)),body:has(#home:not(.hide)){
+  min-height:100dvh;
+  background:#49352e;
+}
+#entrance.magic-scene,#home.home{
+  isolation:isolate;
+  width:100%;max-width:none;
+  aspect-ratio:16/9;
+  margin-inline:auto;
+}
+#entrance.magic-scene::before,#home.home::before{
+  content:"";position:fixed;inset:-28px;z-index:-2;pointer-events:none;
+  background-position:center;background-repeat:no-repeat;background-size:cover;
+  filter:blur(24px) brightness(.62) saturate(.9);
+  transform:translateZ(0);
+}
+#entrance.magic-scene::before{background-image:url("assets/fairy-door-day.PNG")}
+#home.home::before{background-image:url("assets/library-day.PNG")}
+#entrance.magic-scene.night::before{background-image:url("assets/fairy-door-night.PNG")}
+#home.home.night::before{background-image:url("assets/library-night.PNG")}
+#entrance.magic-scene>img,#home.home>img{object-fit:fill;display:block}
+/* On tall screens, vertically center the original scene within the atmospheric stage. */
+@media (min-aspect-ratio: 1/1) {
+  #entrance.magic-scene,#home.home{margin-top:max(0px,calc((100dvh - 56.25vw)/2))}
+}
+@media (max-aspect-ratio: 1/1) {
+  #entrance.magic-scene,#home.home{margin-top:max(0px,calc((100dvh - 56.25vw)/2))}
+}
+#entrance.entering{transform:translate3d(0,0,0);-webkit-backface-visibility:hidden;transform-style:flat}
+#entrance.entering>img{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+@media(prefers-reduced-motion:reduce){#entrance.entering{will-change:auto}}
+</style></head><body><section id="entrance" class="magic-scene" aria-label="Enchanted fairy door"><img id="door-art" src="assets/fairy-door-day.PNG" alt="Fairy door leading to Zara’s Little Library"><div class="magic-backdrop"></div><div class="door-light"></div><div class="door-leaf"><img id="door-leaf-art" src="assets/fairy-door-day.PNG" alt=""></div><button id="door-tap" class="magic-hit" aria-label="Open the fairy door and enter the library"></button></section><main id="home" class="home hide magic-scene"><img src="assets/library-day.PNG" alt="Cozy enchanted library with books, reading chair, and woodland friends"><button class="hotspot one" aria-label="Open Kit and the Red Hat" data-book="kit"></button><button class="hotspot two" aria-label="Open Sara and the Big Egg" data-book="sara"></button><button class="hotspot three" aria-label="Open Sam’s Fun Trip" data-book="sam"></button><svg class="flying-butterfly" id="flying-butterfly" viewBox="0 0 100 100" aria-hidden="true"><g class="wing-left"><path d="M49 52C18 6 3 16 9 43c-9 16 11 33 40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><path d="M43 48C21 18 15 26 21 43" fill="none" stroke="#9b6c45" stroke-width="3"/><circle cx="16" cy="37" r="4" fill="#fff3d5"/></g><g class="wing-right"><path d="M51 52C82 6 97 16 91 43c9 16-11 33-40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><path d="M57 48C79 18 85 26 79 43" fill="none" stroke="#9b6c45" stroke-width="3"/><circle cx="84" cy="37" r="4" fill="#fff3d5"/></g><path d="M50 37v28" stroke="#4d352a" stroke-width="5" stroke-linecap="round"/><path d="M49 39Q38 20 34 25M51 39Q62 20 66 25" stroke="#4d352a" stroke-width="2" fill="none"/></svg><button type="button" class="butterfly-tap" id="butterfly-tap" aria-label="Make the welcome butterfly flutter" title="Tap the butterfly"></button><svg class="flying-butterfly right-flight" id="flying-butterfly-right" viewBox="0 0 100 100" aria-hidden="true"><g class="wing-left"><path d="M49 52C18 6 3 16 9 43c-9 16 11 33 40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><circle cx="16" cy="37" r="4" fill="#fff3d5"/></g><g class="wing-right"><path d="M51 52C82 6 97 16 91 43c9 16-11 33-40 12" fill="#e9bb78" stroke="#6b4936" stroke-width="3"/><circle cx="84" cy="37" r="4" fill="#fff3d5"/></g><path d="M50 37v28" stroke="#4d352a" stroke-width="5" stroke-linecap="round"/><path d="M49 39Q38 20 34 25M51 39Q62 20 66 25" stroke="#4d352a" stroke-width="2" fill="none"/></svg><button type="button" class="butterfly-tap-right" id="butterfly-tap-right" aria-label="Make the butterfly on the right page flutter" title="Tap the butterfly"></button><span class="propeller-spin" id="propeller-spin" aria-hidden="true"><svg viewBox="0 0 100 100"><ellipse cx="50" cy="26" rx="10" ry="24" fill="#f6e3bd" stroke="#b89c72" stroke-width="2"/><ellipse cx="50" cy="74" rx="10" ry="24" fill="#f6e3bd" stroke="#b89c72" stroke-width="2"/><circle cx="50" cy="50" r="9" fill="#b28c60"/></svg></span><button type="button" class="propeller-tap" id="propeller-tap" aria-label="Spin Sam's airplane propeller" title="Tap anywhere on the plane to spin the propeller"></button><button type="button" class="animal-sound-tap kit" data-animal-sound="kit" aria-label="Hear Kit meow" title="Tap Kit to hear her"></button><button type="button" class="animal-sound-tap sara" data-animal-sound="sara" aria-label="Hear Sara chirp" title="Tap Sara to hear her"></button><button type="button" class="animal-sound-tap sam" data-animal-sound="sam" aria-label="Hear Sam squeak" title="Tap Sam to hear him"></button><svg class="flower-sprigs" id="flower-sprigs" viewBox="0 0 440 140" preserveAspectRatio="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
 <defs><g id="daisy-bloom"><ellipse cx="0" cy="-11" rx="5" ry="12" fill="#fff9e9" stroke="#e4d5b7" stroke-width=".8"/><ellipse cx="0" cy="-11" rx="5" ry="12" fill="#fff9e9" stroke="#e4d5b7" stroke-width=".8" transform="rotate(45)"/><ellipse cx="0" cy="-11" rx="5" ry="12" fill="#fff9e9" stroke="#e4d5b7" stroke-width=".8" transform="rotate(90)"/><ellipse cx="0" cy="-11" rx="5" ry="12" fill="#fff9e9" stroke="#e4d5b7" stroke-width=".8" transform="rotate(135)"/><ellipse cx="0" cy="-11" rx="5" ry="12" fill="#fff9e9" stroke="#e4d5b7" stroke-width=".8" transform="rotate(180)"/><ellipse cx="0" cy="-11" rx="5" ry="12" fill="#fff9e9" stroke="#e4d5b7" stroke-width=".8" transform="rotate(225)"/><ellipse cx="0" cy="-11" rx="5" ry="12" fill="#fff9e9" stroke="#e4d5b7" stroke-width=".8" transform="rotate(270)"/><ellipse cx="0" cy="-11" rx="5" ry="12" fill="#fff9e9" stroke="#e4d5b7" stroke-width=".8" transform="rotate(315)"/><circle r="6.2" fill="#d9ac58" stroke="#b58b4b" stroke-width="1"/></g></defs>
 <g class="flower-sprig sprig-one"><path d="M49 133 Q35 95 47 59" fill="none" stroke="#819469" stroke-width="3" stroke-linecap="round"/><path d="M42 108 Q17 87 23 79 Q39 83 42 108 M43 92 Q70 76 73 80 Q67 96 43 101" fill="#a0ad80"/><use href="#daisy-bloom" transform="translate(47 57) scale(.83)"/></g>
 <g class="flower-sprig sprig-two"><path d="M128 138 Q138 92 124 43" fill="none" stroke="#839569" stroke-width="3.5" stroke-linecap="round"/><path d="M133 109 Q154 91 162 94 Q152 112 132 118 M132 86 Q107 73 103 79 Q110 96 134 99" fill="#a1ad83"/><use href="#daisy-bloom" transform="translate(124 40) scale(1.05)"/></g>
