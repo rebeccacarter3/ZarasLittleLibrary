@@ -655,6 +655,14 @@ document.querySelectorAll('[data-book]').forEach(b=>b.addEventListener('click',(
 .z4-paper:has(.z5-checkout-stamp){padding-bottom:clamp(22px,3vw,34px)!important}
 .z4-paper:has(.z5-checkout-stamp) .z4-action{margin:8px 5px 4px!important}
 @media(max-width:480px){.z4-card{padding-top:18%!important;padding-bottom:6%!important}.z4-card .z4-avatar{width:clamp(58px,17vw,90px)!important;height:clamp(58px,17vw,90px)!important}}
+
+/* V5.4: keep all personalized details above the lower book flourish. */
+.z4-card{padding:16% 14% 15%!important;justify-content:center!important}
+.z4-card .z4-avatar{width:clamp(62px,11vw,104px)!important;height:clamp(62px,11vw,104px)!important}
+.z4-card .z4-name{font-size:clamp(21px,3.8vw,34px)!important;margin:0!important}
+.z4-card p{margin:1px 0!important;line-height:1.1!important}
+.z4-card .z4-kicker:not(.z6-hide-kicker){font-size:clamp(8px,1.2vw,11px)!important;letter-spacing:.03em!important;margin-top:7px!important;line-height:1.1!important}
+@media(max-width:480px){.z4-card{padding-top:15%!important;padding-bottom:15%!important}}
 </style><script id="zara-v5-script">
 (function(){
 'use strict';
