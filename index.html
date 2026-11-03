@@ -887,4 +887,67 @@ function sheet(){if(!book||completionOpen)return;completionOpen=true;const b=boo
  // If the last page is reached, label the button as the explicit finish action.
  const change=new MutationObserver(()=>{if(book&&page===book.pages.length-1&&next.textContent!=='Finish Story ✨')next.textContent='Finish Story ✨'});change.observe(document.getElementById('count'),{childList:true,characterData:true,subtree:true});
 })();
-</script></body></html>
+</script><style>
+.zara-sound-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 4px;font:14px Georgia,serif;color:#583b2b}
+.zara-sound-switch{border:1px solid #ad8b5b;border-radius:20px;background:#fff7e7;color:#593d2c;padding:7px 13px;min-width:66px;font:600 13px Georgia,serif;cursor:pointer}
+.zara-sound-switch:focus-visible{outline:3px solid #bd9056;outline-offset:2px}
+</style>
+<script>
+/* Enchanted ambient audio: continuous entrance loop, cozy library, silent reader. */
+(()=>{
+ const KEY='zara-ambient-muted-v1';
+ let muted=localStorage.getItem(KEY)==='true';
+ const entrance=document.getElementById('entrance'),library=document.getElementById('home'),reader=document.getElementById('reader');
+ const doorSound=new Audio('assets/fairy-door-enchantment.mp3');
+ const librarySound=new Audio('assets/cozy-library-fireplace.mp3');
+ for(const a of [doorSound,librarySound]){a.preload='auto';a.loop=true;a.volume=.48}
+ let generation=0;
+ const isReading=()=>!reader.classList.contains('hide');
+ const scene=()=>isReading()?'reader':!library.classList.contains('hide')?'library':'door';
+ function stop(a){a.pause()}
+ function play(a){
+  if(muted||document.hidden||isReading())return;
+  if(!a.paused)return;
+  const result=a.play();
+  if(result?.catch)result.catch(()=>{/* iOS may require a gesture; retry on interaction */});
+ }
+ function sync(){
+  generation++;
+  if(muted||document.hidden||isReading()){stop(doorSound);stop(librarySound);return}
+  if(scene()==='door'){stop(librarySound);doorSound.volume=.48;play(doorSound)}
+  else{stop(doorSound);librarySound.volume=.48;play(librarySound)}
+ }
+ const controls=[];
+ function refreshControls(){controls.forEach(b=>{b.textContent=muted?'Off':'On';b.setAttribute('aria-pressed',String(!muted));b.setAttribute('aria-label',muted?'Turn ambient sounds on':'Mute ambient sounds')})}
+ document.querySelectorAll('.magic-panel').forEach(panel=>{
+  const row=document.createElement('div');row.className='zara-sound-row';
+  const label=document.createElement('span');label.textContent='✨ Enchanted sounds';
+  const button=document.createElement('button');button.type='button';button.className='zara-sound-switch';
+  button.addEventListener('click',()=>{muted=!muted;localStorage.setItem(KEY,String(muted));refreshControls();sync()});
+  controls.push(button);row.append(label,button);panel.append(row)
+ });refreshControls();
+ // Try on initial load; when iOS blocks autoplay, any first tap unlocks it.
+ // The fairy-door tap is no longer a special trigger or a restart point.
+ document.addEventListener('pointerdown',()=>{if(!muted)sync()},{capture:true,passive:true});
+ document.addEventListener('keydown',()=>{if(!muted)sync()},{capture:true});
+ new MutationObserver(sync).observe(library,{attributes:true,attributeFilter:['class']});
+ new MutationObserver(sync).observe(reader,{attributes:true,attributeFilter:['class']});
+ document.addEventListener('visibilitychange',sync);
+ window.addEventListener('pageshow',sync);
+ window.addEventListener('pagehide',()=>{stop(doorSound);stop(librarySound)});
+ function silenceAnimalWhenReading(){
+  if(!isReading()&&!muted)return;
+  if(typeof animalAudio!=='undefined')Object.values(animalAudio).forEach(a=>{a.pause();a.currentTime=0});
+ }
+ document.addEventListener('click',()=>queueMicrotask(silenceAnimalWhenReading),true);
+ const previousBell=window.zaraBell;
+ window.zaraBell=()=>{if(!muted&&!isReading())previousBell?.()};
+ if(typeof animalAudio!=='undefined')Object.values(animalAudio).forEach(a=>{
+  const nativePlay=a.play.bind(a);
+  a.play=function(){if(muted||isReading())return Promise.resolve();return nativePlay()};
+ });
+ window.ZaraAmbient={sync,get muted(){return muted}};
+ sync();
+})();
+</script>
+</body></html>
